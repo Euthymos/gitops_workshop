@@ -16,8 +16,7 @@ FROM registry.access.redhat.com/ubi9/nginx-126
 
 USER root
 
-COPY --from=builder --chown=1001:0 /opt/app-root/src/dist /usr/share/nginx/html
-COPY ./*.conf /etc/nginx/conf.d/
+COPY --from=builder --chown=1001:0 /opt/app-root/src/dist /opt/app-root/src
 
 USER 1001
 EXPOSE 8080

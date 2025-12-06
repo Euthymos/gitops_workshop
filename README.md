@@ -1,5 +1,19 @@
 # IBM GitOps Workshop pre adminov OSK MV SR
 
+Do Vášho obľúbeného prehliadača Vám odporúcam importovať [tieto záložky](https://gist.github.com/runlevl4/c90f8a68f0526e634a67f13e71fdbe0f).
+
+---
+
+V priebehu workshopov budeme pracovať s týmito nástrojmi (návody na inštaláciu v odkazoch):
+  - [minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Fmacos%2Farm64%2Fstable%2Fbinary+download)
+  - [kubectl](https://kubernetes.io/docs/tasks/tools/) (Kubernetes control)
+  - [helm](https://helm.sh/docs/intro/install)
+  - [tkn](https://tekton.dev/docs/cli/) (Tekton)
+  - [argocd](https://argo-cd.readthedocs.io/en/stable/cli_installation/) (ArgoCD)
+  - [oc](https://docs.redhat.com/en/documentation/openshift_container_platform/4.11/html/cli_tools/openshift-cli-oc) (OpenShift)
+
+---
+
 Agenda:
 1. workshop:
     - predstavenie DevOps a GitOps,

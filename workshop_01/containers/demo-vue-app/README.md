@@ -40,3 +40,19 @@ npm run dev
 ```sh
 npm run build
 ```
+
+### Build Container image with Node.js serving development server
+
+```sh
+mv ./Containerfile_node ./Containerfile
+podman build -t demo-vue-nodejs .
+podman run --rm -d --name vue-node demo-vue-nodejs
+```
+
+### Build Container image with nginx serving production build (2 stages build)
+
+```sh
+mv ./Containerfile_nginx ./Containerfile
+podman build -t demo-vue-nginx .
+podman run --rm -d --name vue-ngninx demo-vue-nginx
+```
