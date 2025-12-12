@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: heavy-app
+  namespace: workshop-02
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: heavy-app
+  template:
+    metadata:
+      labels:
+        app: heavy-app
+    spec:
+      containers:
+        - name: app
+          image: docker.io/euthymos/vue-nginx-demo:0.1
+          resources:
+            requests:
+              cpu: "8" # change to "100m"
+              memory: "16Gi" # change to "128Mi"
+          ports:
+            - containerPort: 8080

@@ -1,4 +1,4 @@
-# LAB_02: Deklaratívny deployment + troubleshooting a health monitoring (minikube, kubectl)
+# LAB_02: Deklaratívny deployment + troubleshooting a health monitoring
 
 ### Cieľ
 
@@ -6,7 +6,7 @@ Cieľom cvičení je naučiť sa používať Kubernetes deklaratívnym spôsobom
 a Service pomocou YAML manifestov – a zároveň získať istotu v základnom troubleshootingu a monitoringu health stavu klastra
 a podov cez minikube a kubectl (sledovanie stavov, čítanie logov, interpretácia udalostí v namespaci workshop-02).
 
-## Predpoklady
+### Predpoklady
 
 * Nainštalované: `minikube`, `kubectl`
 * Prístup na internet (na stiahnutie image `docker.io/euthymos/vue-nginx-demo:0.1`)

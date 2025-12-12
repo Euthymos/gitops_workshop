@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bad-image-app
+  namespace: workshop-02
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bad-image-app
+  template:
+    metadata:
+      labels:
+        app: bad-image-app
+    spec:
+      containers:
+        - name: app
+          image: docker.io/euthymos/vue-nginx-demo:nonexistent-tag # use tag '0.1' instead
+          ports:
+            - containerPort: 8080
