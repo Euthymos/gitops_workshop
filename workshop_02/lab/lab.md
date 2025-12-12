@@ -6,7 +6,7 @@ Cieľom cvičení je naučiť sa používať Kubernetes deklaratívnym spôsobom
 a Service pomocou YAML manifestov – a zároveň získať istotu v základnom troubleshootingu a monitoringu health stavu klastra
 a podov cez minikube a kubectl (sledovanie stavov, čítanie logov, interpretácia udalostí v namespaci workshop-02).
 
-### Predpoklady
+## Predpoklady
 
 * Nainštalované: `minikube`, `kubectl`
 * Prístup na internet (na stiahnutie image `docker.io/euthymos/vue-nginx-demo:0.1`)
@@ -53,7 +53,7 @@ a podov cez minikube a kubectl (sledovanie stavov, čítanie logov, interpretác
 
 ### Krok 1 – vytvor manifest `deployment.yaml`
 
-1. Vytvor súbor `deployment.yaml` s týmto obsahom:
+1. Vytvor súbor `deployment.yaml`:
 
    ```yaml
    apiVersion: apps/v1
@@ -423,7 +423,247 @@ a podov cez minikube a kubectl (sledovanie stavov, čítanie logov, interpretác
 
 ---
 
-## Cvičenie 5 – finálny health check namespacu `workshop-02`
+## Cvičenie 5 – Pending pod (nedostatok zdrojov)
+
+### Krok 1 – vytvor deployment s príliš veľkými resource requests
+
+1. Vytvor súbor `deployment-pending.yaml`:
+
+   ```yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     name: heavy-app
+     namespace: workshop-02
+   spec:
+     replicas: 1
+     selector:
+       matchLabels:
+         app: heavy-app
+     template:
+       metadata:
+         labels:
+           app: heavy-app
+       spec:
+         containers:
+           - name: app
+             image: docker.io/euthymos/vue-nginx-demo:0.1
+             resources:
+               requests:
+                 cpu: "8"
+                 memory: "16Gi"
+             ports:
+               - containerPort: 8080
+   ```
+
+2. Aplikuj manifest:
+
+   ```bash
+   kubectl apply -f deployment-pending.yaml
+   ```
+
+3. Zobraz pody v namespaci:
+
+   ```bash
+   kubectl get pods
+   ```
+
+   *(Očakávaj stav `Pending`.)*
+
+---
+
+### Krok 2 – zisti dôvod Pending stavu
+
+1. Zobraz detaily podu `heavy-app`:
+
+   ```bash
+   kubectl describe pod <POD_HEAVY_APP>
+   ```
+
+2. Vyhľadaj v časti **Events** hlášky typu `Insufficient cpu` alebo `Insufficient memory`.
+
+---
+
+### Krok 3 – oprav resource requests a znova nasadi
+
+1. Upravil manifest `deployment-pending.yaml` tak, aby žiadal realistické zdroje, napr.:
+
+   ```yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     name: heavy-app
+     namespace: workshop-02
+   spec:
+     replicas: 1
+     selector:
+       matchLabels:
+         app: heavy-app
+     template:
+       metadata:
+         labels:
+           app: heavy-app
+       spec:
+         containers:
+           - name: app
+             image: docker.io/euthymos/vue-nginx-demo:0.1
+             resources:
+               requests:
+                 cpu: "100m"
+                 memory: "128Mi"
+             ports:
+               - containerPort: 8080
+   ```
+
+2. Aplikuj zmeny:
+
+   ```bash
+   kubectl apply -f deployment-pending.yaml
+   ```
+
+3. Over, že pod prejde do stavu `Running`:
+
+   ```bash
+   kubectl get pods
+   ```
+
+4. Over v `describe`, že už nevidíš „Insufficient …“:
+
+   ```bash
+   kubectl describe pod <POD_HEAVY_APP>
+   ```
+
+---
+
+## Cvičenie 6 – failing readiness/liveness probe
+
+### Krok 1 – vytvor deployment s chybným readiness probe
+
+1. Vytvor súbor `deployment-probes.yaml`:
+
+   ```yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     name: probe-app
+     namespace: workshop-02
+   spec:
+     replicas: 1
+     selector:
+       matchLabels:
+         app: probe-app
+     template:
+       metadata:
+         labels:
+           app: probe-app
+       spec:
+         containers:
+           - name: web
+             image: docker.io/euthymos/vue-nginx-demo:0.1
+             ports:
+               - containerPort: 8080
+             readinessProbe:
+               httpGet:
+                 path: /healthz
+                 port: 8080
+               initialDelaySeconds: 5
+               periodSeconds: 5
+             livenessProbe:
+               httpGet:
+                 path: /
+                 port: 8080
+               initialDelaySeconds: 10
+               periodSeconds: 10
+   ```
+
+2. Aplikuj manifest:
+
+   ```bash
+   kubectl apply -f deployment-probes.yaml
+   ```
+
+3. Zobraz pody:
+
+   ```bash
+   kubectl get pods
+   ```
+
+   *(Očakávaj stav `Running`, ale READY = `0/1` alebo prechody medzi `0/1` a `1/1`.)*
+
+---
+
+### Krok 2 – zisti dôvod failing readiness probe
+
+1. Zobraz detaily podu `probe-app`:
+
+   ```bash
+   kubectl describe pod <POD_PROBE_APP>
+   ```
+
+2. V časti **Events** nájdi záznamy o neúspešných readiness probes (HTTP 404 na `/healthz`).
+
+---
+
+### Krok 3 – oprav readinessProbe a znova nasadi
+
+1. Upravil manifest `deployment-probes.yaml` tak, aby readiness kontrolovala cestu `/` (ktorá vracia 200):
+
+   ```yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     name: probe-app
+     namespace: workshop-02
+   spec:
+     replicas: 1
+     selector:
+       matchLabels:
+         app: probe-app
+     template:
+       metadata:
+         labels:
+           app: probe-app
+       spec:
+         containers:
+           - name: web
+             image: docker.io/euthymos/vue-nginx-demo:0.1
+             ports:
+               - containerPort: 8080
+             readinessProbe:
+               httpGet:
+                 path: /
+                 port: 8080
+               initialDelaySeconds: 5
+               periodSeconds: 5
+             livenessProbe:
+               httpGet:
+                 path: /
+                 port: 8080
+               initialDelaySeconds: 10
+               periodSeconds: 10
+   ```
+
+2. Aplikuj zmeny:
+
+   ```bash
+   kubectl apply -f deployment-probes.yaml
+   ```
+
+3. Over, že pod je READY `1/1`:
+
+   ```bash
+   kubectl get pods
+   ```
+
+4. Over v `describe`, že nové failing readiness events už nepribúdajú:
+
+   ```bash
+   kubectl describe pod <POD_PROBE_APP>
+   ```
+
+---
+
+## Cvičenie 7 – finálny health check namespacu `workshop-02`
 
 1. Zobraz všetky deploymenty v namespaci:
 
@@ -455,7 +695,3 @@ a podov cez minikube a kubectl (sledovanie stavov, čítanie logov, interpretác
    kubectl describe pod <NAZOV_PODU>
    kubectl logs <NAZOV_PODU>
    ```
-
----
-
-Ak chceš, viem ti k tomu spraviť aj „verziu pre lektora“ s očakávanými výstupmi, typickými chybami a komentármi ku každému kroku.
