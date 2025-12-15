@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: docker.io/euthymos/vue-nginx-demo:0.1
+          image: docker.io/euthymos/vue-nginx-demo:0.2
           resources:
             requests:
               cpu: "8" # change to "100m"
