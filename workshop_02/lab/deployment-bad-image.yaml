@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: app
-          image: docker.io/euthymos/vue-nginx-demo:nonexistent-tag # use tag '0.1' instead
+          image: docker.io/euthymos/vue-nginx-demo:nonexistent-tag # use tag '0.2' instead
           ports:
             - containerPort: 8080

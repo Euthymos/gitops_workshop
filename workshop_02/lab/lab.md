@@ -73,7 +73,7 @@ a podov cez minikube a kubectl (sledovanie stavov, čítanie logov, interpretác
        spec:
          containers:
            - name: web
-             image: docker.io/euthymos/vue-nginx-demo:0.1
+             image: docker.io/euthymos/vue-nginx-demo:0.2
              ports:
                - containerPort: 8080
    ```
@@ -404,7 +404,7 @@ a podov cez minikube a kubectl (sledovanie stavov, čítanie logov, interpretác
        spec:
          containers:
            - name: app
-             image: docker.io/euthymos/vue-nginx-demo:0.1
+             image: docker.io/euthymos/vue-nginx-demo:0.2
              ports:
                - containerPort: 8080
    ```
@@ -447,7 +447,7 @@ a podov cez minikube a kubectl (sledovanie stavov, čítanie logov, interpretác
        spec:
          containers:
            - name: app
-             image: docker.io/euthymos/vue-nginx-demo:0.1
+             image: docker.io/euthymos/vue-nginx-demo:0.2
              resources:
                requests:
                  cpu: "8"
@@ -506,7 +506,7 @@ a podov cez minikube a kubectl (sledovanie stavov, čítanie logov, interpretác
        spec:
          containers:
            - name: app
-             image: docker.io/euthymos/vue-nginx-demo:0.1
+             image: docker.io/euthymos/vue-nginx-demo:0.2
              resources:
                requests:
                  cpu: "100m"
@@ -559,7 +559,7 @@ a podov cez minikube a kubectl (sledovanie stavov, čítanie logov, interpretác
        spec:
          containers:
            - name: web
-             image: docker.io/euthymos/vue-nginx-demo:0.1
+             image: docker.io/euthymos/vue-nginx-demo:0.2
              ports:
                - containerPort: 8080
              readinessProbe:
@@ -626,7 +626,7 @@ a podov cez minikube a kubectl (sledovanie stavov, čítanie logov, interpretác
        spec:
          containers:
            - name: web
-             image: docker.io/euthymos/vue-nginx-demo:0.1
+             image: docker.io/euthymos/vue-nginx-demo:0.2
              ports:
                - containerPort: 8080
              readinessProbe:
