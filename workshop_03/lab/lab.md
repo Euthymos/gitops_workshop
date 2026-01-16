@@ -283,9 +283,9 @@ spec:
     spec:
       containers:
         - name: web
-          image: httpd:2.4-alpine
+          image: registry.access.redhat.com/ubi10/httpd-24
           ports:
-            - containerPort: 80
+            - containerPort: 8080
           volumeMounts:
             - name: httpd-content
               mountPath: /usr/local/apache2/htdocs/index.html
@@ -316,8 +316,8 @@ spec:
   selector:
     app: httpd-web
   ports:
-    - port: 80
-      targetPort: 80
+    - port: 8080
+      targetPort: 8080
       protocol: TCP
 ```
 
@@ -330,7 +330,7 @@ Test z tester podu:
 
 ```bash
 kubectl exec -it tester -n workshop-03 -- sh
-wget -qO- http://httpd-web:80 | head -n 5
+wget -qO- http://httpd-web:8080 | head -n 5
 ```
 
 ---
@@ -411,7 +411,7 @@ spec:
               service:
                 name: httpd-web
                 port:
-                  number: 80
+                  number: 8080
 ```
 
 Aplikuj:
