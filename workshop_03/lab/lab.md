@@ -8,7 +8,7 @@ Cieľom cvičení so Service a Ingress je naučiť sa, ako správne sprístupni�
 
 * Nainštalované: `kubectl`, `minikube`, `helm`
 * Bežiaci minikube klaster
-* Prístup na internet (na stiahnutie image `docker.io/euthymos/vue-nginx-demo:0.1`)
+* Prístup na internet (na stiahnutie image `docker.io/euthymos/vue-nginx-demo:0.2`)
 
 ---
 
@@ -52,7 +52,7 @@ Cieľom cvičení so Service a Ingress je naučiť sa, ako správne sprístupni�
 
 ### Cieľ
 
-* nasadiť Deployment s `docker.io/euthymos/vue-nginx-demo:0.1`
+* nasadiť Deployment s `docker.io/euthymos/vue-nginx-demo:0.2`
 * vytvoriť Service a overiť prístup cez browser
 
 ### Krok 1 – Deployment
@@ -225,7 +225,7 @@ kubectl apply -f vue-service-wrongport.yaml
 Znova v `tester`:
 
 ```sh
-wget -qO- http://vue-web-wrongport:80 | head -n 5
+wget -qO- http://vue-web-wrongport:3000 | head -n 5
 ```
 
 ---
@@ -288,7 +288,7 @@ spec:
             - containerPort: 8080
           volumeMounts:
             - name: httpd-content
-              mountPath: /usr/local/apache2/htdocs/index.html # zámerná chyba
+              mountPath: /usr/local/apache2/htdocs/index.html # zámerná chyba, zmeň na /var/www/html/index.html
               subPath: index.html
       volumes:
         - name: httpd-content
@@ -405,11 +405,29 @@ spec:
                 name: vue-web
                 port:
                   number: 8080
-          - path: /httpd(/|$)(.*)
+          - path: /httpd
             pathType: Prefix
             backend:
               service:
                 name: httpd-web
+                port:
+                  number: 8080
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: default-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: vue-svc
                 port:
                   number: 8080
 ```
