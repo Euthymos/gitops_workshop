@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vue-web
+  namespace: workshop-03
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vue-web
+  template:
+    metadata:
+      labels:
+        app: vue-web
+    spec:
+      containers:
+        - name: web
+          image: docker.io/euthymos/vue-nginx-demo:0.1
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "100m"
+              memory: "128Mi"

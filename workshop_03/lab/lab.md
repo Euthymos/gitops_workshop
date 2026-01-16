@@ -248,7 +248,7 @@ cat > httpd-index.html << 'EOF'
   <title>HTTPD ConfigMap demo</title>
 </head>
 <body>
-  <h1>HTTPD pod + ConfigMap</h1>
+  <h1>Vitajte na GitOps workshope pre OSK MV SR!</h1>
   <p>Tento obsah je servovaný z Apache httpd a pochádza z ConfigMap.</p>
 </body>
 </html>

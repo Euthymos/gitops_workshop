@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: vue-web-wrongport
+  namespace: workshop-03
+spec:
+  type: ClusterIP
+  selector:
+    app: vue-web
+  ports:
+    - port: 3000          # port služby
+      targetPort: 3000    # NESPRÁVNE, kontajner počúva na 8080
+      protocol: TCP
