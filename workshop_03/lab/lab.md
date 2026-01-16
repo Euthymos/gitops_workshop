@@ -184,8 +184,8 @@ spec:
   selector:
     app: vue-web
   ports:
-    - port: 80          # port služby
-      targetPort: 80    # NESPRÁVNE, kontajner počúva na 8080
+    - port: 3000          # port služby
+      targetPort: 3000    # NESPRÁVNE, kontajner počúva na 8080
       protocol: TCP
 ```
 
@@ -203,7 +203,7 @@ kubectl run tester --image=busybox:1.36 -it --restart=Never -n workshop-03 -- sh
 Vnútri podu:
 
 ```sh
-wget -qO- http://vue-web-wrongport:80 || echo "request failed"
+wget -qO- http://vue-web-wrongport:3000 || echo "request failed"
 ```
 
 Očakávaj fail.
@@ -212,7 +212,7 @@ Oprav Service takto:
 
 ```yaml
 ports:
-  - port: 80
+  - port: 3000
     targetPort: 8080
 ```
 
