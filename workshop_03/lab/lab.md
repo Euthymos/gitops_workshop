@@ -288,7 +288,7 @@ spec:
             - containerPort: 8080
           volumeMounts:
             - name: httpd-content
-              mountPath: /usr/local/apache2/htdocs/index.html
+              mountPath: /usr/local/apache2/htdocs/index.html # zámerná chyba
               subPath: index.html
       volumes:
         - name: httpd-content
