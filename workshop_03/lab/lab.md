@@ -2,7 +2,7 @@
 
 ### Cieľ
 
-Cieľom cvičení je .
+Cieľom cvičení so Service a Ingress je naučiť sa, ako správne sprístupniť aplikácie bežiace v podoch – najprv vnútri klastra (ClusterIP), potom zvonka (NodePort / LoadBalancer) a nakoniec cez Ingress s HTTP pravidlami. Účastníci si vyskúšajú, ako Service mapuje traffic na konkrétne pody, ako diagnostikovať typické chyby (chýbajúce Endpoints, zlý port, zlý selector) a ako Ingress Controller routuje požiadavky na viaceré služby podľa URL cesty.
 
 ### Predpoklady
 
