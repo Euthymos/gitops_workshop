@@ -10,17 +10,36 @@ spec:
   rules:
     - http:
         paths:
-          - path: /vue(/|$)(.*)
+          - path: /vue
             pathType: Prefix
             backend:
               service:
                 name: vue-web
                 port:
                   number: 8080
-          - path: /httpd(/|$)(.*)
+          - path: /httpd
             pathType: Prefix
             backend:
               service:
                 name: httpd-web
                 port:
                   number: 8080
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: default-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: vue-svc
+                port:
+                  number: 8080
+

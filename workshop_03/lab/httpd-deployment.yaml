@@ -20,7 +20,7 @@ spec:
             - containerPort: 8080
           volumeMounts:
             - name: httpd-content
-              mountPath: /usr/local/apache2/htdocs/index.html # zámerná chyba
+              mountPath: /usr/local/apache2/htdocs/index.html # zámerná chyba, zmeň na /var/www/html/index.html
               subPath: index.html
           resources:
             requests:
