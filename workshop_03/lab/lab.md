@@ -398,7 +398,7 @@ spec:
   rules:
     - http:
         paths:
-          - path: /vue(/|$)(.*)
+          - path: /vue
             pathType: Prefix
             backend:
               service:
