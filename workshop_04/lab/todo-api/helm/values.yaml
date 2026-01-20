@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: quay.io/eutymos/todo-api:latest
+  repository: quay.io/euthymos/todos-api
   tag: "latest"
   pullPolicy: IfNotPresent
 
@@ -37,6 +37,9 @@ ingress:
 # MongoDB dependency values (Bitnami mongodb chart)
 mongodb:
   architecture: standalone
+
+  image:
+    tag: latest
 
   auth:
     # enabled: false
