@@ -53,7 +53,11 @@ app.delete("/todos/:id", async (req, res) => {
 });
 
 async function main() {
-  await mongoose.connect(MONGO_URL);
+  const options = {
+    user: process.env.MONGO_USER,
+    pass: process.env.MONGO_PASSWORD,
+  }
+  await mongoose.connect(MONGO_URL, options);
   console.log("Connected to MongoDB");
   app.listen(PORT, () => console.log(`API listening on :${PORT}`));
 }
