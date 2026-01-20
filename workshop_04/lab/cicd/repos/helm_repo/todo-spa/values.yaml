@@ -6,7 +6,7 @@ image:
 replicaCount: 1
 
 service:
-  port: 80
+  port: 8080
 
 ingress:
   enabled: false
@@ -14,5 +14,8 @@ ingress:
   host: ""
   path: /
 
-nodeEnv: "production"
+env:
+  nodeEnv: "production"
+  apiHost: "todo-api.local"
+
 resources: {}

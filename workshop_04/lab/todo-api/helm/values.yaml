@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: your-docker-repo/todo-api
+  repository: quay.io/eutymos/todo-api:latest
   tag: "latest"
   pullPolicy: IfNotPresent
 
@@ -24,8 +24,8 @@ resources: {}
 #    memory: 128Mi
 
 ingress:
-  enabled: false
-  className: ""
+  enabled: true
+  className: nginx
   annotations: {}
   hosts:
     - host: todo.local

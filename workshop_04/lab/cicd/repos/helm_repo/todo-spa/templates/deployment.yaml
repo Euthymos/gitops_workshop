@@ -20,6 +20,8 @@ spec:
             - containerPort: 8080
           env:
             - name: NODE_ENV
-              value: {{ .Values.nodeEnv | quote }}
+              value: {{ .Values.env.nodeEnv | quote }}
+            - name: VITE_API_PATH
+              value: {{ .Values.env.apiHost | quote }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

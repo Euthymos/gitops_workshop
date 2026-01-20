@@ -1,5 +1,8 @@
 replicaCount: 3
-nodeEnv: "production"
+
+env:
+  nodeEnv: "production"
+  apiHost: "todo.local"
 
 ingress:
   enabled: true

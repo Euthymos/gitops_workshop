@@ -1,5 +1,8 @@
 replicaCount: 1
-nodeEnv: "development"
+
+env:
+  nodeEnv: "development"
+  apiHost: "todo-dev.local"
 
 ingress:
   enabled: true
