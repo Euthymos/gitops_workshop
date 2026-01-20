@@ -1,0 +1,55 @@
+replicaCount: 1
+
+image:
+  repository: your-docker-repo/todo-api
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+env:
+  port: 8080
+  mongo:
+    database: todos
+    # If your app needs auth, enable mongodb.auth below and the URL will include credentials.
+
+resources: {}
+#  limits:
+#    cpu: 200m
+#    memory: 256Mi
+#  requests:
+#    cpu: 50m
+#    memory: 128Mi
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: todo.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# MongoDB dependency values (Bitnami mongodb chart)
+mongodb:
+  architecture: standalone
+
+  auth:
+    # enabled: false
+    # If enabled, a Secret will be created by the mongodb chart and we’ll reference it.
+    enabled: true
+    rootPassword: "admin123"
+    usernames:
+      - dbuser
+    passwords:
+      - dbpasswd
+    databases:
+      - todos
+
+  persistence:
+    enabled: true
+    size: 2Gi

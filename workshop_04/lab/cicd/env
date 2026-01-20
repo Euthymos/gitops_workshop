@@ -1,0 +1,10 @@
+# Skopíruj na .env a doplň hodnoty
+GITEA_ADMIN_USER=admin
+GITEA_ADMIN_PASS=admin12345
+
+# Vygeneruj v Gitea: User Settings -> Applications -> Generate Token
+# Potrebuje repo read/write na push do helm-repo
+GITEA_HTTP_TOKEN=a7d06248c0adc41d47e7587538f95959b8ff67ae
+
+# Hostnames (pre /etc/hosts)
+GITEA_HOST=gitea.local

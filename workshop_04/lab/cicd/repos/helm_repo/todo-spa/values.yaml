@@ -1,0 +1,18 @@
+image:
+  repository: registry.kube-system.svc.cluster.local:5000/todo-spa
+  tag: "dev"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  port: 80
+
+ingress:
+  enabled: false
+  className: nginx
+  host: ""
+  path: /
+
+nodeEnv: "production"
+resources: {}

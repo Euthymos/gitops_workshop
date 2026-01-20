@@ -1,0 +1,14 @@
+replicaCount: 1
+nodeEnv: "development"
+
+ingress:
+  enabled: true
+  host: todo-spa-dev.local
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi

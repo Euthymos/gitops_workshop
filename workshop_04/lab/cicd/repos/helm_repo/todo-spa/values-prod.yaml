@@ -1,0 +1,14 @@
+replicaCount: 3
+nodeEnv: "production"
+
+ingress:
+  enabled: true
+  host: todo-spa.local
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi

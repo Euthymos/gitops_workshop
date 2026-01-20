@@ -1,0 +1,16 @@
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: gitea.local
+      paths:
+        - path: /
+          pathType: Prefix
+
+gitea:
+  admin:
+    existingSecret: gitea-admin
+
+service:
+  http:
+    type: ClusterIP

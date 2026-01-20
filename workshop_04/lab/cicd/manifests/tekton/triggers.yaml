@@ -1,0 +1,73 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: gitea-push-binding
+  namespace: cicd
+spec:
+  params:
+    - name: repo_full_name
+      value: $(body.repository.full_name)
+    - name: ref
+      value: $(body.ref)
+    - name: sha
+      value: $(body.after)
+
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: gitea-push-template
+  namespace: cicd
+spec:
+  params:
+    - name: repo_full_name
+    - name: ref
+    - name: sha
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1
+      kind: PipelineRun
+      metadata:
+        generateName: app-ci-
+        namespace: cicd
+      spec:
+        serviceAccountName: pipeline-bot
+        pipelineRef:
+          name: app-ci-to-helm-update
+        params:
+          - name: appRepoFullName
+            value: $(tt.params.repo_full_name)
+          - name: appRevision
+            value: main
+          - name: imageRepo
+            value: registry.kube-system.svc.cluster.local:5000/todo-spa
+          - name: imageTag
+            value: $(tt.params.sha)
+          - name: helmRepoFullName
+            value: admin/helm-repo
+          - name: helmValuesPath
+            value: todo-spa/values-dev.yaml
+        workspaces:
+          - name: shared
+            persistentVolumeClaim:
+              claimName: cicd-workspace
+
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: gitea-listener
+  namespace: cicd
+spec:
+  serviceAccountName: el-sa
+  triggers:
+    - name: on-push-main
+      interceptors:
+        - ref:
+            name: cel
+          params:
+            - name: filter
+              value: "body.ref == 'refs/heads/main'"
+      bindings:
+        - ref: gitea-push-binding
+      template:
+        ref: gitea-push-template
