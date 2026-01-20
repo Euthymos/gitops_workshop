@@ -48,44 +48,22 @@ spec:
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
-  name: npm-ci
-  namespace: cicd
-spec:
-  workspaces:
-    - name: source
-  steps:
-    - name: npm-ci
-      image: node:20-alpine
-      workingDir: $(workspaces.source.path)/src
-      script: |
-        #!/bin/sh
-        set -e
-        # prefer ci when lock exists, else fallback
-        if [ -f package-lock.json ]; then
-          npm ci
-        else
-          npm install
-        fi
-
----
-apiVersion: tekton.dev/v1
-kind: Task
-metadata:
   name: npm-run
   namespace: cicd
 spec:
   params:
     - name: script
       type: string
+    - name: image
+      type: string
+      default: registry.access.redhat.com/ubi10/nodejs-20-minimal:latest
   workspaces:
     - name: source
   steps:
     - name: run
-      image: node:20-alpine
+      image: $(params.image)
       workingDir: $(workspaces.source.path)/src
       script: |
-        #!/bin/sh
-        set -e
         npm run "$(params.script)"
 
 ---
@@ -137,7 +115,7 @@ spec:
       default: "http://gitea-http.gitea.svc.cluster.local:3000"
     - name: valuesFilePath
       type: string
-      default: "myapp/values-dev.yaml"
+      default: "todos-spa/values-dev.yaml"
     - name: newTag
       type: string
   workspaces:
@@ -194,7 +172,7 @@ spec:
       default: main
     - name: imageRepo
       type: string
-      default: "registry.kube-system.svc.cluster.local:5000/myapp"
+      default: "registry.kube-system.svc.cluster.local:5000/todos-spa"
     - name: imageTag
       type: string
       description: "napr. git SHA"
@@ -219,16 +197,21 @@ spec:
         - name: source
           workspace: shared
 
-    - name: npm-ci
-      runAfter: ["clone"]
+    - name: npm-install
+      runAfter:
+        - clone
       taskRef:
-        name: npm-ci
+        name: npm-run
+      params:
+        - name: script
+          value: install
       workspaces:
         - name: source
           workspace: shared
 
     - name: test
-      runAfter: ["npm-ci"]
+      runAfter:
+        - npm-install
       taskRef:
         name: npm-run
       params:
@@ -239,7 +222,8 @@ spec:
           workspace: shared
 
     - name: lint
-      runAfter: ["npm-ci"]
+      runAfter:
+        - npm-install
       taskRef:
         name: npm-run
       params:
@@ -250,7 +234,9 @@ spec:
           workspace: shared
 
     - name: build-push
-      runAfter: ["test", "lint"]
+      runAfter:
+        - test
+        - lint
       taskRef:
         name: kaniko-build-push-incluster-registry
       params:

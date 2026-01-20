@@ -1,5 +1,5 @@
 apiVersion: v2
-name: todo-spa
+name: todos-spa
 description: Sample app chart for workshop
 type: application
 version: 0.1.0

@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "todo-spa.fullname" . }}
+  name: {{ include "todos-spa.fullname" . }}
 spec:
   selector:
-    app: {{ include "todo-spa.name" . }}
+    app: {{ include "todos-spa.name" . }}
   ports:
     - port: {{ .Values.service.port }}
       targetPort: 80

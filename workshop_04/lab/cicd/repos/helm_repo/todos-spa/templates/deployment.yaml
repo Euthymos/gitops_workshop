@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "todo-spa.fullname" . }}
+  name: {{ include "todos-spa.fullname" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "todo-spa.name" . }}
+      app: {{ include "todos-spa.name" . }}
   template:
     metadata:
       labels:
-        app: {{ include "todo-spa.name" . }}
+        app: {{ include "todos-spa.name" . }}
     spec:
       containers:
-        - name: todo-spa
+        - name: todos-spa
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:

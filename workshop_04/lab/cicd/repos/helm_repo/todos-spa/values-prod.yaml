@@ -2,11 +2,11 @@ replicaCount: 3
 
 env:
   nodeEnv: "production"
-  apiHost: "todo.local"
+  apiHost: "todos.local"
 
 ingress:
   enabled: true
-  host: todo-spa.local
+  host: todos-spa.local
 
 resources:
   requests:

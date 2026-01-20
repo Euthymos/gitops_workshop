@@ -37,14 +37,14 @@ spec:
             # <release-name>-mongodb with keys: mongodb-root-password (root) and/or mongodb-passwords (users)
             # To keep this simple, we’ll assume you use root credentials.
             - name: MONGO_USER
-              value: "root"
+              value: {{ index .Values.mongodb.auth.usernames 0}}
             - name: MONGO_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ printf "%s-mongodb" .Release.Name }}
-                  key: mongodb-root-password
+                  key: mongodb-passwords
             - name: MONGO_URL
-              value: "mongodb://$(MONGO_USER):$(MONGO_PASSWORD)@{{ $mongoHost }}:27017/{{ $db }}?authSource=admin"
+              value: "mongodb://$(MONGO_USER):$(MONGO_PASSWORD)@{{ $mongoHost }}:27017/{{ $db }}"
             {{- else }}
             - name: MONGO_URL
               value: "mongodb://{{ $mongoHost }}:27017/{{ $db }}"

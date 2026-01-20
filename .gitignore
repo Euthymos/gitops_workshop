@@ -1,1 +1,6 @@
-workshop_04/lab/workshop_infra/env
+**/.vscode
+workshop_04/lab/cicd/.env
+workshop_04/lab/todo-api/helm/Chart.lock
+workshop_04/lab/todo-api/helm/charts/
+workshop_04/lab/todo-api/src/node_modules
+workshop_04/lab/todo-api/src/package-lock.json

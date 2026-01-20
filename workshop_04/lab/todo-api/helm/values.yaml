@@ -28,7 +28,7 @@ ingress:
   className: nginx
   annotations: {}
   hosts:
-    - host: todo.local
+    - host: todos.local
       paths:
         - path: /
           pathType: Prefix

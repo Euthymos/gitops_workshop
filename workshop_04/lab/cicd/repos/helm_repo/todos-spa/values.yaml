@@ -1,5 +1,5 @@
 image:
-  repository: registry.kube-system.svc.cluster.local:5000/todo-spa
+  repository: registry.kube-system.svc.cluster.local:5000/todos-spa
   tag: "dev"
   pullPolicy: IfNotPresent
 
@@ -16,6 +16,6 @@ ingress:
 
 env:
   nodeEnv: "production"
-  apiHost: "todo-api.local"
+  apiHost: "todos-api.local"
 
 resources: {}
