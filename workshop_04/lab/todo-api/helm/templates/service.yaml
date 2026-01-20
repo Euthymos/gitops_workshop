@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "todo-api.fullname" . }}
+  name: {{ include "todos-api.fullname" . }}
   labels:
-    {{- include "todo-api.labels" . | nindent 4 }}
+    {{- include "todos-api.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -11,4 +11,4 @@ spec:
       port: {{ .Values.service.port }}
       targetPort: http
   selector:
-    {{- include "todo-api.selectorLabels" . | nindent 4 }}
+    {{- include "todos-api.selectorLabels" . | nindent 4 }}

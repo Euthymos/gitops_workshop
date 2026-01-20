@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "todo-api.fullname" . }}
+  name: {{ include "todos-api.fullname" . }}
   labels:
-    {{- include "todo-api.labels" . | nindent 4 }}
+    {{- include "todos-api.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "todo-api.selectorLabels" . | nindent 6 }}
+      {{- include "todos-api.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "todo-api.selectorLabels" . | nindent 8 }}
+        {{- include "todos-api.selectorLabels" . | nindent 8 }}
     spec:
       containers:
         - name: api
