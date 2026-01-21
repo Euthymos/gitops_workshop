@@ -1,0 +1,17 @@
+replicaCount: 3
+
+env:
+  nodeEnv: "production"
+  apiHost: "todos.local"
+
+ingress:
+  enabled: true
+  host: todos-spa.local
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi

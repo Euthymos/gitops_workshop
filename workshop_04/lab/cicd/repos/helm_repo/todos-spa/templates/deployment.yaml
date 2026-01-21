@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "todos-spa.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "todos-spa.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "todos-spa.name" . }}
+    spec:
+      containers:
+        - name: todos-spa
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+            - name: NODE_ENV
+              value: {{ .Values.env.nodeEnv | quote }}
+            - name: VITE_API_PATH
+              value: {{ .Values.env.apiHost | quote }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}

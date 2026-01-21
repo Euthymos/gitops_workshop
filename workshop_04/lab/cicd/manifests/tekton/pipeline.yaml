@@ -1,0 +1,103 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: app-ci-to-helm-update
+  namespace: cicd
+spec:
+  params:
+    - name: appRepoFullName
+      type: string
+      description: "napr. admin/app-repo"
+    - name: appRevision
+      type: string
+      default: main
+    - name: imageRepo
+      type: string
+      default: "registry.kube-system.svc.cluster.local/todos-spa"
+    - name: imageTag
+      type: string
+      description: "napr. git SHA"
+    - name: helmRepoFullName
+      type: string
+      default: "admin/helm-repo"
+    - name: helmValuesPath
+      type: string
+      default: "todos-spa/values-dev.yaml"
+  workspaces:
+    - name: shared
+  tasks:
+    - name: clone
+      taskRef:
+        name: git-clone-http
+      params:
+        - name: repoFullName
+          value: $(params.appRepoFullName)
+        - name: revision
+          value: $(params.appRevision)
+      workspaces:
+        - name: source
+          workspace: shared
+
+    - name: npm-install
+      runAfter:
+        - clone
+      taskRef:
+        name: npm-run
+      params:
+        - name: script
+          value: install
+      workspaces:
+        - name: source
+          workspace: shared
+
+    - name: test
+      runAfter:
+        - npm-install
+      taskRef:
+        name: npm-run
+      params:
+        - name: script
+          value: run test
+      workspaces:
+        - name: source
+          workspace: shared
+
+    - name: lint
+      runAfter:
+        - npm-install
+      taskRef:
+        name: npm-run
+      params:
+        - name: script
+          value: "run lint"
+      workspaces:
+        - name: source
+          workspace: shared
+
+    - name: build-push
+      runAfter:
+        - test
+        - lint
+      taskRef:
+        name: kaniko-build-push-incluster-registry
+      params:
+        - name: image
+          value: $(params.imageRepo):$(params.imageTag)
+      workspaces:
+        - name: source
+          workspace: shared
+
+    - name: update-helm
+      runAfter: ["build-push"]
+      taskRef:
+        name: update-helm-image-tag
+      params:
+        - name: helmRepoFullName
+          value: $(params.helmRepoFullName)
+        - name: valuesFilePath
+          value: $(params.helmValuesPath)
+        - name: newTag
+          value: $(params.imageTag)
+      workspaces:
+        - name: source
+          workspace: shared

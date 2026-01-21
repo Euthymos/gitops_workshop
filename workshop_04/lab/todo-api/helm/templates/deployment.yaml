@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "todos-api.fullname" . }}
+  labels:
+    {{- include "todos-api.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "todos-api.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "todos-api.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: api
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.env.port }}
+          env:
+            - name: PORT
+              value: "{{ .Values.env.port }}"
+
+            {{- /*
+                MongoDB service name (Bitnami mongodb chart):
+                Usually <release-name>-mongodb
+            */ -}}
+            {{- $mongoHost := printf "%s-mongodb" .Release.Name -}}
+            {{- $db := .Values.env.mongo.database -}}
+
+            {{- if .Values.mongodb.auth.enabled }}
+            # When auth is enabled, Bitnami mongodb chart creates a secret:
+            # <release-name>-mongodb with keys: mongodb-root-password (root) and/or mongodb-passwords (users)
+            # To keep this simple, we’ll assume you use root credentials.
+            - name: MONGO_USER
+              value: {{ index .Values.mongodb.auth.usernames 0}}
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-mongodb" .Release.Name }}
+                  key: mongodb-passwords
+            - name: MONGO_URL
+              value: "mongodb://$(MONGO_USER):$(MONGO_PASSWORD)@{{ $mongoHost }}:27017/{{ $db }}"
+            {{- else }}
+            - name: MONGO_URL
+              value: "mongodb://{{ $mongoHost }}:27017/{{ $db }}"
+            {{- end }}
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 20

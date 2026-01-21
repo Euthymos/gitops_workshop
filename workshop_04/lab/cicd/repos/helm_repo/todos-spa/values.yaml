@@ -1,0 +1,21 @@
+image:
+  repository: registry.kube-system.svc.cluster.local:5000/todos-spa
+  tag: "dev"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  port: 8081
+
+ingress:
+  enabled: false
+  className: nginx
+  host: ""
+  path: /
+
+env:
+  nodeEnv: "production"
+  apiHost: "todos-api.local"
+
+resources: {}
