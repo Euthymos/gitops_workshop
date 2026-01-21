@@ -10,6 +10,10 @@ ingress:
 gitea:
   admin:
     existingSecret: gitea-admin
+  config:
+    webhook:
+      ALLOWED_HOST_LIST: "el-gitea-listener.cicd.svc.cluster.local,el-gitea-listener.cicd,*.cicd.svc.cluster.local,*.svc.cluster.local"
+
 
 service:
   http:

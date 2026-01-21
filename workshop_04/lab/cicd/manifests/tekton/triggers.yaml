@@ -39,13 +39,13 @@ spec:
           - name: appRevision
             value: main
           - name: imageRepo
-            value: registry.kube-system.svc.cluster.local:5000/todo-spa
+            value: registry.kube-system.svc.cluster.local/todo-spa
           - name: imageTag
             value: $(tt.params.sha)
           - name: helmRepoFullName
             value: admin/helm-repo
           - name: helmValuesPath
-            value: todo-spa/values-dev.yaml
+            value: todos-spa/values.yaml
         workspaces:
           - name: shared
             persistentVolumeClaim:

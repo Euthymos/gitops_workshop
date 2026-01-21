@@ -7,4 +7,4 @@ spec:
     app: {{ include "todos-spa.name" . }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: 80
+      targetPort: {{ .Values.service.port }}

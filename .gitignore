@@ -1,6 +1,10 @@
 **/.vscode
 workshop_04/lab/cicd/.env
+workshop_04/lab/cicd/repos/app_repo/node_modules
+workshop_04/lab/cicd/repos/app_repo/dist
+workshop_04/lab/cicd/repos/app_repo/.eslintcache
 workshop_04/lab/todo-api/helm/Chart.lock
 workshop_04/lab/todo-api/helm/charts/
 workshop_04/lab/todo-api/src/node_modules
 workshop_04/lab/todo-api/src/package-lock.json
+package-lock.json

@@ -56,15 +56,15 @@ spec:
       type: string
     - name: image
       type: string
-      default: registry.access.redhat.com/ubi10/nodejs-20-minimal:latest
+      default: node:20-alpine
   workspaces:
     - name: source
   steps:
-    - name: run
+    - name: script
       image: $(params.image)
       workingDir: $(workspaces.source.path)/src
       script: |
-        npm run "$(params.script)"
+        npm $(params.script)
 
 ---
 apiVersion: tekton.dev/v1
@@ -76,7 +76,7 @@ spec:
   params:
     - name: image
       type: string
-      description: "napr. registry.kube-system.svc.cluster.local:5000/myapp:tag"
+      description: "napr. registry.kube-system.svc.cluster.local:80/todos-spa:tag"
     - name: dockerfile
       type: string
       default: Dockerfile
@@ -137,6 +137,7 @@ spec:
       script: |
         #!/bin/sh
         set -e
+
         apk add --no-cache git yq
 
         cd $(workspaces.source.path)
@@ -155,108 +156,3 @@ spec:
         git add "$(params.valuesFilePath)"
         git commit -m "Update image tag to $(params.newTag)" || echo "No changes to commit"
         git push
-
----
-apiVersion: tekton.dev/v1
-kind: Pipeline
-metadata:
-  name: app-ci-to-helm-update
-  namespace: cicd
-spec:
-  params:
-    - name: appRepoFullName
-      type: string
-      description: "napr. admin/app-repo"
-    - name: appRevision
-      type: string
-      default: main
-    - name: imageRepo
-      type: string
-      default: "registry.kube-system.svc.cluster.local:5000/todos-spa"
-    - name: imageTag
-      type: string
-      description: "napr. git SHA"
-    - name: helmRepoFullName
-      type: string
-      default: "admin/helm-repo"
-    - name: helmValuesPath
-      type: string
-      default: "myapp/values-dev.yaml"
-  workspaces:
-    - name: shared
-  tasks:
-    - name: clone
-      taskRef:
-        name: git-clone-http
-      params:
-        - name: repoFullName
-          value: $(params.appRepoFullName)
-        - name: revision
-          value: $(params.appRevision)
-      workspaces:
-        - name: source
-          workspace: shared
-
-    - name: npm-install
-      runAfter:
-        - clone
-      taskRef:
-        name: npm-run
-      params:
-        - name: script
-          value: install
-      workspaces:
-        - name: source
-          workspace: shared
-
-    - name: test
-      runAfter:
-        - npm-install
-      taskRef:
-        name: npm-run
-      params:
-        - name: script
-          value: test
-      workspaces:
-        - name: source
-          workspace: shared
-
-    - name: lint
-      runAfter:
-        - npm-install
-      taskRef:
-        name: npm-run
-      params:
-        - name: script
-          value: lint
-      workspaces:
-        - name: source
-          workspace: shared
-
-    - name: build-push
-      runAfter:
-        - test
-        - lint
-      taskRef:
-        name: kaniko-build-push-incluster-registry
-      params:
-        - name: image
-          value: $(params.imageRepo):$(params.imageTag)
-      workspaces:
-        - name: source
-          workspace: shared
-
-    - name: update-helm
-      runAfter: ["build-push"]
-      taskRef:
-        name: update-helm-image-tag
-      params:
-        - name: helmRepoFullName
-          value: $(params.helmRepoFullName)
-        - name: valuesFilePath
-          value: $(params.helmValuesPath)
-        - name: newTag
-          value: $(params.imageTag)
-      workspaces:
-        - name: source
-          workspace: shared

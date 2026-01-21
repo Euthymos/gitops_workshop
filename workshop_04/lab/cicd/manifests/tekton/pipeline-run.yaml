@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: app-ci-manual-run
+  namespace: cicd
+spec:
+  pipelineRef:
+    name: app-ci-to-helm-update
+  params:
+    - name: appRepoFullName
+      value: admin/app-repo
+    - name: appRevision
+      value: main
+    - name: imageTag
+      value: manual-001
+    - name: helmRepoUrl
+      value: http://gitea.local/admin/helm-repo.git
+    - name: helmValuesPath
+      value: todos-spa/values-dev.yaml
+  workspaces:
+    - name: shared
+      persistentVolumeClaim:
+        claimName: cicd-workspace

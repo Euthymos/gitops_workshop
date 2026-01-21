@@ -12,7 +12,8 @@ kubectl -n cicd create secret generic gitea-credentials \
   --from-literal=username="${GITEA_ADMIN_USER}" \
   --from-literal=token="${GITEA_HTTP_TOKEN}"
 
-kubectl apply -f manifests/tekton/tasks-pipeline.yaml
+kubectl apply -f manifests/tekton/tasks.yaml
+kubectl apply -f manifests/tekton/pipeline.yaml
 kubectl apply -f manifests/tekton/triggers-rbac.yaml
 kubectl apply -f manifests/tekton/triggers.yaml
 
