@@ -1,5 +1,5 @@
 image:
-  repository: registry.kube-system.svc.cluster.local:5000/todos-spa
+  repository: registry.kube-system.svc.cluster.local/todos-spa
   tag: "dev"
   pullPolicy: IfNotPresent
 
