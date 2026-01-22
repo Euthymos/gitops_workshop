@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 
 const PORT = process.env.PORT || 8080;
 const MONGO_URL = process.env.MONGO_URL || "mongodb://localhost:27017/todos";
+const chartVersion = process.env.CHART_VERSION || 'unknown';
+const appVersion = process.env.APP_VERSION || 'unknown';
 
 const app = express();
 app.use(cors());
@@ -20,6 +22,8 @@ const todoSchema = new mongoose.Schema(
 const Todo = mongoose.model("Todo", todoSchema);
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
+
+app.get("/version", (_req, res) => res.json({ chartVersion, appVersion }));
 
 app.get("/todos", async (_req, res) => {
   const todos = await Todo.find().sort({ createdAt: -1 });
