@@ -39,7 +39,7 @@ spec:
           - name: appRevision
             value: main
           - name: imageRepo
-            value: registry.kube-system.svc.cluster.local/todo-spa
+            value: registry.kube-system.svc.cluster.local/todos-spa
           - name: imageTag
             value: $(tt.params.sha)
           - name: helmRepoFullName
