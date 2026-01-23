@@ -84,10 +84,10 @@ V druhej časti workshopu budeme pracovať s Tekton pipelines ako našim CI nás
       pullPolicy: IfNotPresent
     ```
 
-4. Prečítaj súbor `values-dev.yaml` a všimni si sekciu `image:`:
+4. Prečítaj súbor `dev.yaml` a všimni si sekciu `image:`:
 
     ```bash
-    cat values-dev.yaml
+    cat dev.yaml
     ```
 
 5. Vypíš obsah adresára `templates`, otvor v ňom súbor `deployment.yaml` a všimni si sekciu `containers:`:
@@ -148,11 +148,11 @@ V druhej časti workshopu budeme pracovať s Tekton pipelines ako našim CI nás
     minikube addons enable ingress
     ```
 
-2. Pre nasadenie aplikácie použijeme príkaz `helm install`. Pri nasadzovaní sa použijú predvolené hodnoty doplnené či prepísané hodnotami zo súbora `values-dev.yaml`:
+2. Pre nasadenie aplikácie použijeme príkaz `helm install`. Pri nasadzovaní sa použijú predvolené hodnoty doplnené či prepísané hodnotami zo súbora `dev.yaml`:
 
     ```bash
     helm install todos-api . \
-      -f values-dev.yaml \
+      -f dev.yaml \
       -n workshop-04-dev
     ```
 
@@ -360,10 +360,10 @@ V druhej časti workshopu budeme pracovať s Tekton pipelines ako našim CI nás
 
 ### Krok 2 - Nasaď frontend v namespace `workshop-04-dev`
 
-1. Použi príkaz `helm install` a súbor s hodnotami `values-dev.yaml`:
+1. Použi príkaz `helm install` a súbor s hodnotami `dev.yaml`:
 
     ```
-    helm install -n workshop-04-dev todos-spa-dev . --values values-dev.yaml
+    helm install -n workshop-04-dev todos-spa-dev . --values dev.yaml
     ```
 
 2. Over úspešné nasadenie:
@@ -398,10 +398,10 @@ V druhej časti workshopu budeme pracovať s Tekton pipelines ako našim CI nás
 
 ### Krok 1 - Nasaď frontend v namespace `workshop-04`
 
-1. Použi príkaz `helm install` a súbor s hodnotami `values-prod.yaml`:
+1. Použi príkaz `helm install` a súbor s hodnotami `prod.yaml`:
 
     ```
-    helm install -n workshop-04 todos-spa . --values values.yaml
+    helm install -n workshop-04 todos-spa . --values prod.yaml
     ```
 
 2. Over úspešné nasadenie:
