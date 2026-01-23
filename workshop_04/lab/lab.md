@@ -411,3 +411,29 @@ V druhej časti workshopu budeme pracovať s Tekton pipelines ako našim CI nás
     ```
 
 3. Otvor aplikáciu - do webového prehliadača zadaj adresu http://todos-spa.local
+
+## Bonus - Tekton dashboard
+
+### Krok 1 - Nainštaluj Tekton dashboard v minikube klastri
+
+1. Aplikuj deklarácie potrebných resources:
+
+    ```bash
+    kubectl apply --filename https://infra.tekton.dev/tekton-releases/dashboard/latest/release.yaml
+    ```
+
+2. Zisti port, na ktorom je dashboard prístupný:
+
+    ```bash
+    kubectl get -n tekton-pipelines svc
+    ```
+
+3. Nastav port-forwarding pre daný pod a jeho port
+
+    ```bash
+    k port-forward -n tekton-pipelines deploy/tekton-dashboard 9090:9097f
+    ```
+
+### Krok 2 - Preskú Tekton dashboard v prehliadači
+
+1. V prehliadači otvor URL: http://localhost:9090
