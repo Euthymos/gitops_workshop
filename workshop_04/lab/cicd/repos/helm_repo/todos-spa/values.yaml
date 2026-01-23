@@ -1,7 +1,7 @@
 image:
-  repository: registry.kube-system.svc.cluster.local/todos-spa
-  tag: "dev"
-  pullPolicy: IfNotPresent
+  repository: localhost:5000/todos-spa
+  tag: "latest"
+  pullPolicy: Always
 
 replicaCount: 1
 
@@ -9,9 +9,9 @@ service:
   port: 8081
 
 ingress:
-  enabled: false
+  enabled: true
   className: nginx
-  host: ""
+  host: "todos-spa.local"
   path: /
 
 env:

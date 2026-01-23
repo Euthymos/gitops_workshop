@@ -76,7 +76,7 @@ spec:
   params:
     - name: image
       type: string
-      description: "napr. registry.kube-system.svc.cluster.local:80/todos-spa:tag"
+      description: "napr. registry.kube-system.svc.cluster.loca/todos-spa:tag"
     - name: dockerfile
       type: string
       default: Dockerfile

@@ -49,6 +49,10 @@ spec:
             - name: MONGO_URL
               value: "mongodb://{{ $mongoHost }}:27017/{{ $db }}"
             {{- end }}
+            - name: CHART_VERSION
+              value: {{ .Chart.Version }}
+            - name: APP_VERSION
+              value: {{ .Chart.AppVersion }}
 
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

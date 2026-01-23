@@ -4,7 +4,10 @@ set -euo pipefail
 kubectl apply -f manifests/namespaces.yaml
 
 # admin secret (demo)
-kubectl -n gitea apply -f manifests/gitea-admin-secret.yaml
+kubectl -n gitea delete secret gitea-admin >/dev/null 2>&1 || true
+kubectl -n gitea create secret generic gitea-admin \
+  --from-literal=username="${GITEA_ADMIN_USER}" \
+  --from-literal=password="${GITEA_ADMIN_PASS}"
 
 helm repo add gitea-charts https://dl.gitea.io/charts/ >/dev/null 2>&1 || true
 helm repo update >/dev/null 2>&1

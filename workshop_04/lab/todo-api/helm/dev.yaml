@@ -1,0 +1,6 @@
+ingress:
+  hosts:
+    - host: todos-dev.local
+      paths:
+        - path: /
+          pathType: Prefix

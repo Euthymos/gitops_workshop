@@ -1,5 +1,5 @@
 {{- define "todos-spa.name" -}}
-todo-spa
+todos-spa
 {{- end -}}
 
 {{- define "todos-spa.fullname" -}}
