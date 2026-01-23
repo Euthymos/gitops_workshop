@@ -141,10 +141,11 @@ V druhej časti workshopu budeme pracovať s Tekton pipelines ako našim CI nás
 
 ### Krok 1 - Nasaď aplikáciu v namespace `workshop-04-dev`
 
-1. Vytvor namespace `workshop-04-dev`
+1. Vytvor namespace `workshop-04-dev` a povoľ doplnok `ingress`
 
     ```bash
     kubectl create namespace workshop-04-dev
+    minikube addons enable ingress
     ```
 
 2. Pre nasadenie aplikácie použijeme príkaz `helm install`. Pri nasadzovaní sa použijú predvolené hodnoty doplnené či prepísané hodnotami zo súbora `values-dev.yaml`:
@@ -243,6 +244,7 @@ V druhej časti workshopu budeme pracovať s Tekton pipelines ako našim CI nás
 
     ```bash
     cd ../../cicd
+    sudo chmod 774 ./scripts/*.sh
     cat makefile
     ```
 
@@ -268,29 +270,144 @@ V druhej časti workshopu budeme pracovať s Tekton pipelines ako našim CI nás
 
 ---
 
-## Cvičenie 5 – Vytvor git repozitáre, vygeneruj token a nastav webhook cez gitea UI
+## Cvičenie 5 – Vytvor git repozitáre a vygeneruj token cez gitea UI
 
 ### Krok 1 - Vytvor repozitáre pre aplikáciu a helm chart
 
 1. Vo webovom prehliadači otvor gitea UI na adrese http://gitea.local
 
+2. Vytvor git repozitár `app-repo` pre aplikačný kód
 
-2. Prezri si skripty v adresári `scripts`:
+3. Vytvor git repozitár `helm-repo` pre helm chart
 
-    ```bash
-    helm upgrade todos-api-dev . -n workshop-04-dev
-    ```
+### Krok 2 - Vygeneruj prístupový token
 
-   Poznámka: Skripty spustia minikube klaster, ak ešte nebeží, povolia doplnok, ktorý vytvorý lokálny docker register na klastri, nainštalujú tekton, nainštaluje git repozitár z helmu balíčka `gitea`, aplikujú príslušné deklarácie a vypíše adresy jednotlivých služieb.
+1. Vygeneruj prístupový token pre admin užívateľa. Klikni na ikonku užívateľa, z menu vyber `Settings` -> choď do Applications, vygeneruj a skopíruj token
 
-3. Spusti príkaz `make up`:
+2. Vlož token ako hodnotu premennej `GITEA_HTTP_TOKEN` v súbore `.env` a znovu spusti príkaz `make up`
 
-    ```bash
-    make up
-    ```
+### Krok 3 - Pushni obsah adresárov do vzdialených repozitárov
 
-4. Over výsledok skriptov:
+1. Inicializuj git repozitár v adresári `app-repo/`, sprav počiatočný commit a pushni ho do vzdialeného repozitára:
 
     ```bash
-    make verify
+    cd app-repo/
+    git config --global user.name "admin"
+    git config --global user.email "admin@example.com"
+    git init
+    git checkout -b main
+    git add .
+    git commit -m "first commit"
+    git remote add origin http://gitea.local/admin/app-repo.git
+    git push -u origin main
     ```
+
+2. Inicializuj git repozitár v adresári `helm-repo/`, sprav počiatočný commit a pushni ho do vzdialeného repozitára:
+
+    ```bash
+    cd ../helm-repo/
+    git init
+    git checkout -b main
+    git add .
+    git commit -m "first commit"
+    git remote add origin http://gitea.local/admin/helm-repo.git
+    git push -u origin main
+    ```
+
+## Cvičenie 6 – Spusti tekton pipeline ručne
+
+### Krok 1 - Spusti tekton pipeline
+
+1. Obozám sa s parametrami a workspaces definovanými v pipeline `app-ci-to-helm-update`:
+
+    ```
+    tkn pipeline describe -n cicd app-ci-to-helm
+    ```
+
+2. Aplikuj deklaráciu pipeline-run.yaml"
+
+    ```bash
+    kubectl apply -f ../../manifests/tekton/pipeline-run.yaml
+    ```
+
+3. Všimni si, s akými parametrami bola pipeline spustená:
+
+    ```bash
+    tkn pipelinerun describe -n cicd app-ci-manual-run
+    ```
+
+4. Sleduj priebeh behu pipeline:
+
+    ```bash
+    tkn pipelinerun logs -n cicd app-ci-manual-run -f
+    ```
+
+5. Over úspešné dokončenie behu pipeline"
+
+    ```bash
+    tkn pipeline list -n cicd
+    ```
+
+## Cvičenie 7 – Nasaď development inštanciu frontendu z vytvoreného kontajnerového image
+
+### Krok 1 - Stiahni zmeny v repozitári `helm-repo`
+
+1. Aktualizuj obsah adresára `helm_repo`:
+
+    ```
+    git pull
+    ```
+
+### Krok 2 - Nasaď frontend v namespace `workshop-04-dev`
+
+1. Použi príkaz `helm install` a súbor s hodnotami `values-dev.yaml`:
+
+    ```
+    helm install -n workshop-04-dev todos-spa-dev . --values values-dev.yaml
+    ```
+
+2. Over úspešné nasadenie:
+
+    ```
+    kubectl get all -n workshop-04-dev
+    ```
+
+## Cvičenie 8 – Nastav webhook pre push do `main` branch a spusti pipeline commitom
+
+### Krok 1 - Zisti URL pre git webhook
+
+1. Pozri si popis `gitea-listener` tekton event listeneru:
+
+    ```
+    tkn eventlistener describe -n cicd gitea listener
+    ```
+
+2. Skopíruj hodnotu `URL:`
+
+### Krok 2 - Vytvor webhook cez UI
+
+1. Otvor `app-repo` v gitea UI, klikni na `Settings`
+
+2. Z menu vyber `Webhooks`, klikni na `Add webhook`, to políčka `Target URL` vlož skopírovaný link a pridaj webhook.
+
+    ```bash
+    tkn pipelinerun logs -n cicd app-ci-manual-run -f
+    ```
+
+## Cvičenie 9 – Nasaď produkčnú inštanciu frontendu z vytvoreného image
+
+### Krok 1 - Nasaď frontend v namespace `workshop-04`
+
+1. Použi príkaz `helm install` a súbor s hodnotami `values-prod.yaml`:
+
+    ```
+    helm install -n workshop-04 todos-spa . --values values.yaml
+    ```
+
+2. Over úspešné nasadenie:
+
+    ```
+    kubectl get all -n workshop-04
+    ```
+
+3. Otvor aplikáciu - do webového prehliadača zadaj adresu http://todos-spa.local
