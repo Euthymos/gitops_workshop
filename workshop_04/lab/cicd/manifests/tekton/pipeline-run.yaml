@@ -16,7 +16,7 @@ spec:
     - name: helmRepoUrl
       value: http://gitea.local/admin/helm-repo.git
     - name: helmValuesPath
-      value: todos-spa/values-dev.yaml
+      value: todos-spa/dev.yaml
   workspaces:
     - name: shared
       persistentVolumeClaim:
