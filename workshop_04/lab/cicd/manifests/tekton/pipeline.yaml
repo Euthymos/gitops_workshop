@@ -22,7 +22,7 @@ spec:
       default: "admin/helm-repo"
     - name: helmValuesPath
       type: string
-      default: "todos-spa/values-dev.yaml"
+      default: "todos-spa/dev.yaml"
   workspaces:
     - name: shared
   tasks:
