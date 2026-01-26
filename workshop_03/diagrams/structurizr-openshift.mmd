@@ -1,0 +1,175 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["Deployment View: Production"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    subgraph 37 ["Client Device"]
+      style 37 fill:#ffffff,stroke:#444444,color:#444444
+
+      38["<div style='font-weight: bold'>Client</div><div style='font-size: 70%; margin-top: 0px'>[Container: Web Browser]</div><div style='font-size: 80%; margin-top:10px'>Used by the client</div>"]
+      style 38 fill:#ffffff,stroke:#444444,color:#444444
+    end
+
+    subgraph 39 ["Edge / DMZ"]
+      style 39 fill:#ffffff,stroke:#444444,color:#444444
+
+      40("<div style='font-weight: bold'>F5 Load Balancer</div><div style='font-size: 70%; margin-top: 0px'>[Container: F5 BIG-IP]</div><div style='font-size: 80%; margin-top:10px'>External VIP/GSLB</div>")
+      style 40 fill:#ffffff,stroke:#444444,color:#444444
+    end
+
+    subgraph 42 ["OpenShift Cluster A"]
+      style 42 fill:#ffffff,stroke:#444444,color:#444444
+
+      subgraph group1 ["Services"]
+        style group1 fill:#ffffff,stroke:#cccccc,color:#cccccc,stroke-dasharray:5
+
+        subgraph 46 ["Service A"]
+          style 46 fill:#ffffff,stroke:#3d6fdd,color:#3d6fdd
+
+          47("<div style='font-weight: bold'>Service A (A)</div><div style='font-size: 70%; margin-top: 0px'>[Container: Kubernetes Service]</div><div style='font-size: 80%; margin-top:10px'>Kubernetes Service</div>")
+          style 47 fill:#ffffff,stroke:#444444,color:#444444
+        end
+
+        subgraph 49 ["Service B"]
+          style 49 fill:#ffffff,stroke:#3d6fdd,color:#3d6fdd
+
+          50("<div style='font-weight: bold'>Service B (A)</div><div style='font-size: 70%; margin-top: 0px'>[Container: Kubernetes Service]</div><div style='font-size: 80%; margin-top:10px'>Kubernetes Service</div>")
+          style 50 fill:#ffffff,stroke:#444444,color:#444444
+        end
+
+      end
+
+      subgraph 43 ["Ingress"]
+        style 43 fill:#ffffff,stroke:#3d6fdd,color:#3d6fdd
+
+        44("<div style='font-weight: bold'>Ingress Controller (A)</div><div style='font-size: 70%; margin-top: 0px'>[Container: OpenShift Router]</div><div style='font-size: 80%; margin-top:10px'>Routes inbound traffic</div>")
+        style 44 fill:#ffffff,stroke:#444444,color:#444444
+      end
+
+      subgraph 52 ["Deployment A"]
+        style 52 fill:#ffffff,stroke:#3d6fdd,color:#3d6fdd
+
+        subgraph 53 ["Pod A1"]
+          style 53 fill:#ffffff,stroke:#3d6fdd,color:#3d6fdd
+
+          54("<div style='font-weight: bold'>Workload A (A)</div><div style='font-size: 70%; margin-top: 0px'>[Container: Container]</div><div style='font-size: 80%; margin-top:10px'>Application instance running<br />in a pod</div>")
+          style 54 fill:#ffffff,stroke:#444444,color:#444444
+          subgraph 56 ["Pod A2"]
+            style 56 fill:#ffffff,stroke:#3d6fdd,color:#3d6fdd
+
+            57("<div style='font-weight: bold'>Workload A (A)</div><div style='font-size: 70%; margin-top: 0px'>[Container: Container]</div><div style='font-size: 80%; margin-top:10px'>Application instance running<br />in a pod</div>")
+            style 57 fill:#ffffff,stroke:#444444,color:#444444
+          end
+
+        end
+
+      end
+
+      subgraph 59 ["Deployment B"]
+        style 59 fill:#ffffff,stroke:#3d6fdd,color:#3d6fdd
+
+        subgraph 60 ["Pod B1"]
+          style 60 fill:#ffffff,stroke:#3d6fdd,color:#3d6fdd
+
+          61("<div style='font-weight: bold'>Workload B (A)</div><div style='font-size: 70%; margin-top: 0px'>[Container: Container]</div><div style='font-size: 80%; margin-top:10px'>Application instance running<br />in a pod</div>")
+          style 61 fill:#ffffff,stroke:#444444,color:#444444
+        end
+
+        subgraph 63 ["Pod B2"]
+          style 63 fill:#ffffff,stroke:#444444,color:#444444
+
+          64("<div style='font-weight: bold'>Workload B (A)</div><div style='font-size: 70%; margin-top: 0px'>[Container: Container]</div><div style='font-size: 80%; margin-top:10px'>Application instance running<br />in a pod</div>")
+          style 64 fill:#ffffff,stroke:#444444,color:#444444
+        end
+
+      end
+
+    end
+
+    subgraph 66 ["OpenShift Cluster B"]
+      style 66 fill:#ffffff,stroke:#444444,color:#444444
+
+      subgraph group2 ["Services"]
+        style group2 fill:#ffffff,stroke:#cccccc,color:#cccccc,stroke-dasharray:5
+
+        subgraph 70 ["Service A"]
+          style 70 fill:#ffffff,stroke:#3d6fdd,color:#3d6fdd
+
+          71("<div style='font-weight: bold'>Service A (B)</div><div style='font-size: 70%; margin-top: 0px'>[Container: Kubernetes Service]</div><div style='font-size: 80%; margin-top:10px'>Kubernetes Service</div>")
+          style 71 fill:#ffffff,stroke:#444444,color:#444444
+        end
+
+        subgraph 73 ["Service B"]
+          style 73 fill:#ffffff,stroke:#3d6fdd,color:#3d6fdd
+
+          74("<div style='font-weight: bold'>Service B (B)</div><div style='font-size: 70%; margin-top: 0px'>[Container: Kubernetes Service]</div><div style='font-size: 80%; margin-top:10px'>Kubernetes Service</div>")
+          style 74 fill:#ffffff,stroke:#444444,color:#444444
+        end
+
+      end
+
+      subgraph 67 ["Ingress"]
+        style 67 fill:#ffffff,stroke:#3d6fdd,color:#3d6fdd
+
+        68("<div style='font-weight: bold'>Ingress Controller (B)</div><div style='font-size: 70%; margin-top: 0px'>[Container: OpenShift Router]</div><div style='font-size: 80%; margin-top:10px'>Routes inbound traffic</div>")
+        style 68 fill:#ffffff,stroke:#444444,color:#444444
+      end
+
+      subgraph 76 ["Deployment A"]
+        style 76 fill:#ffffff,stroke:#3d6fdd,color:#3d6fdd
+
+        subgraph 77 ["Pod A1"]
+          style 77 fill:#ffffff,stroke:#3d6fdd,color:#3d6fdd
+
+          78("<div style='font-weight: bold'>Workload A (B)</div><div style='font-size: 70%; margin-top: 0px'>[Container: Container]</div><div style='font-size: 80%; margin-top:10px'>Application instance running<br />in a pod</div>")
+          style 78 fill:#ffffff,stroke:#444444,color:#444444
+          subgraph 80 ["Pod A2"]
+            style 80 fill:#ffffff,stroke:#3d6fdd,color:#3d6fdd
+
+            81("<div style='font-weight: bold'>Workload A (B)</div><div style='font-size: 70%; margin-top: 0px'>[Container: Container]</div><div style='font-size: 80%; margin-top:10px'>Application instance running<br />in a pod</div>")
+            style 81 fill:#ffffff,stroke:#444444,color:#444444
+          end
+
+        end
+
+      end
+
+      subgraph 83 ["Deployment B"]
+        style 83 fill:#ffffff,stroke:#3d6fdd,color:#3d6fdd
+
+        subgraph 84 ["Pod B1"]
+          style 84 fill:#ffffff,stroke:#444444,color:#444444
+
+          85("<div style='font-weight: bold'>Workload B (B)</div><div style='font-size: 70%; margin-top: 0px'>[Container: Container]</div><div style='font-size: 80%; margin-top:10px'>Application instance running<br />in a pod</div>")
+          style 85 fill:#ffffff,stroke:#444444,color:#444444
+        end
+
+        subgraph 87 ["Pod B2"]
+          style 87 fill:#ffffff,stroke:#444444,color:#444444
+
+          88("<div style='font-weight: bold'>Workload B (B)</div><div style='font-size: 70%; margin-top: 0px'>[Container: Container]</div><div style='font-size: 80%; margin-top:10px'>Application instance running<br />in a pod</div>")
+          style 88 fill:#ffffff,stroke:#444444,color:#444444
+        end
+
+      end
+
+    end
+
+    38-. "<div>Sends requests</div><div style='font-size: 70%'>[HTTPS]</div>" .->40
+    40-. "<div>Forwards traffic (cluster A)</div><div style='font-size: 70%'>[HTTPS]</div>" .->44
+    44-. "<div>Routes (host/path)</div><div style='font-size: 70%'>[HTTP(S)]</div>" .->47
+    44-. "<div>Routes (host/path)</div><div style='font-size: 70%'>[HTTP(S)]</div>" .->50
+    47-. "<div>Load-balances to endpoints</div><div style='font-size: 70%'>[TCP]</div>" .->54
+    47-. "<div>Load-balances to endpoints</div><div style='font-size: 70%'>[TCP]</div>" .->57
+    50-. "<div>Load-balances to endpoints</div><div style='font-size: 70%'>[TCP]</div>" .->61
+    50-. "<div>Load-balances to endpoints</div><div style='font-size: 70%'>[TCP]</div>" .->64
+    40-. "<div>Forwards traffic (cluster B)</div><div style='font-size: 70%'>[HTTPS]</div>" .->68
+    68-. "<div>Routes (host/path)</div><div style='font-size: 70%'>[HTTP(S)]</div>" .->71
+    68-. "<div>Routes (host/path)</div><div style='font-size: 70%'>[HTTP(S)]</div>" .->74
+    71-. "<div>Load-balances to endpoints</div><div style='font-size: 70%'>[TCP]</div>" .->78
+    71-. "<div>Load-balances to endpoints</div><div style='font-size: 70%'>[TCP]</div>" .->81
+    74-. "<div>Load-balances to endpoints</div><div style='font-size: 70%'>[TCP]</div>" .->85
+    74-. "<div>Load-balances to endpoints</div><div style='font-size: 70%'>[TCP]</div>" .->88
+
+  end
