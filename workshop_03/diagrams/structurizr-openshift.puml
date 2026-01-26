@@ -1,0 +1,259 @@
+@startuml
+title <size:24>Deployment View: Production</size>
+
+set separator none
+left to right direction
+skinparam ranksep 60
+skinparam nodesep 30
+hide stereotype
+
+<style>
+  root {
+    BackgroundColor: #ffffff;
+    FontColor: #444444;
+  }
+  // Element,Client
+  .Element-RWxlbWVudCxDbGllbnQ= {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Element,Ingress
+  .Element-RWxlbWVudCxJbmdyZXNz {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 0;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Element,K8sService
+  .Element-RWxlbWVudCxLOHNTZXJ2aWNl {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 0;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Element,LB
+  .Element-RWxlbWVudCxMQg== {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 0;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Element,Pod
+  .Element-RWxlbWVudCxQb2Q= {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 0;
+    LineThickness: 2;
+    RoundCorner: 20;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Relationship
+  .Relationship-UmVsYXRpb25zaGlw {
+    LineThickness: 2;
+    LineStyle: 10-10;
+    LineColor: #444444;
+    FontColor: #444444;
+    FontSize: 24;
+  }
+  // Element
+  .DeploymentNode-RWxlbWVudA== {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+  }
+  // Element,Kubernetes - deploy
+  .DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gZGVwbG95 {
+    BackgroundColor: #ffffff;
+    LineColor: #3d6fdd;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #3d6fdd;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+  }
+  // Element,Kubernetes - ing
+  .DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gaW5n {
+    BackgroundColor: #ffffff;
+    LineColor: #3d6fdd;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #3d6fdd;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+  }
+  // Element,Kubernetes - pod
+  .DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gcG9k {
+    BackgroundColor: #ffffff;
+    LineColor: #3d6fdd;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #3d6fdd;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+  }
+  // Element,Kubernetes - svc
+  .DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gc3Zj {
+    BackgroundColor: #ffffff;
+    LineColor: #3d6fdd;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #3d6fdd;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+  }
+  // Services
+  .Group-U2VydmljZXM= {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 2-2;
+    LineThickness: 2;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+  }
+</style>
+
+rectangle "Client Device\n<size:16>[Deployment Node: Laptop/Phone]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.ClientDevice {
+  person "==Client\n<size:16>[Container: Web Browser]</size>\n\nUsed by the client" <<Element-RWxlbWVudCxDbGllbnQ=>> as Production.ClientDevice.Client_1
+}
+
+rectangle "Edge / DMZ\n<size:16>[Deployment Node]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.EdgeDMZ {
+  rectangle "==F5 Load Balancer\n<size:16>[Container: F5 BIG-IP]</size>\n\nExternal VIP/GSLB" <<Element-RWxlbWVudCxMQg==>> as Production.EdgeDMZ.F5LoadBalancer_1
+}
+
+rectangle "OpenShift Cluster A\n<size:16>[Deployment Node]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.OpenShiftClusterA {
+  rectangle "Services" <<Group-U2VydmljZXM=>> as groupU2VydmljZXM= {
+    rectangle "Service A\n<size:16>[Deployment Node]</size>\n\n<img:https://static.structurizr.com/themes/kubernetes-v0.3/svc-256.png{scale=0.28125}>" <<DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gc3Zj>> as Production.OpenShiftClusterA.ServiceA {
+      rectangle "==Service A (A)\n<size:16>[Container: Kubernetes Service]</size>\n\nKubernetes Service" <<Element-RWxlbWVudCxLOHNTZXJ2aWNl>> as Production.OpenShiftClusterA.ServiceA.ServiceAA_1
+    }
+
+    rectangle "Service B\n<size:16>[Deployment Node]</size>\n\n<img:https://static.structurizr.com/themes/kubernetes-v0.3/svc-256.png{scale=0.28125}>" <<DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gc3Zj>> as Production.OpenShiftClusterA.ServiceB {
+      rectangle "==Service B (A)\n<size:16>[Container: Kubernetes Service]</size>\n\nKubernetes Service" <<Element-RWxlbWVudCxLOHNTZXJ2aWNl>> as Production.OpenShiftClusterA.ServiceB.ServiceBA_1
+    }
+
+  }
+
+  rectangle "Ingress\n<size:16>[Deployment Node: Ingress layer]</size>\n\n<img:https://static.structurizr.com/themes/kubernetes-v0.3/ing-256.png{scale=0.28125}>" <<DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gaW5n>> as Production.OpenShiftClusterA.Ingress {
+    rectangle "==Ingress Controller (A)\n<size:16>[Container: OpenShift Router]</size>\n\nRoutes inbound traffic" <<Element-RWxlbWVudCxJbmdyZXNz>> as Production.OpenShiftClusterA.Ingress.IngressControllerA_1
+  }
+
+  rectangle "Deployment A\n<size:16>[Deployment Node]</size>\n\n<img:https://static.structurizr.com/themes/kubernetes-v0.3/deploy-256.png{scale=0.28125}>" <<DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gZGVwbG95>> as Production.OpenShiftClusterA.DeploymentA {
+    rectangle "Pod A1\n<size:16>[Deployment Node]</size>\n\n<img:https://static.structurizr.com/themes/kubernetes-v0.3/pod-256.png{scale=0.28125}>" <<DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gcG9k>> as Production.OpenShiftClusterA.DeploymentA.PodA1 {
+      rectangle "==Workload A (A)\n<size:16>[Container: Container]</size>\n\nApplication instance running in a pod" <<Element-RWxlbWVudCxQb2Q=>> as Production.OpenShiftClusterA.DeploymentA.PodA1.WorkloadAA_1
+      rectangle "Pod A2\n<size:16>[Deployment Node]</size>\n\n<img:https://static.structurizr.com/themes/kubernetes-v0.3/pod-256.png{scale=0.28125}>" <<DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gcG9k>> as Production.OpenShiftClusterA.DeploymentA.PodA1.PodA2 {
+        rectangle "==Workload A (A)\n<size:16>[Container: Container]</size>\n\nApplication instance running in a pod" <<Element-RWxlbWVudCxQb2Q=>> as Production.OpenShiftClusterA.DeploymentA.PodA1.PodA2.WorkloadAA_1
+      }
+
+    }
+
+  }
+
+  rectangle "Deployment B\n<size:16>[Deployment Node]</size>\n\n<img:https://static.structurizr.com/themes/kubernetes-v0.3/deploy-256.png{scale=0.28125}>" <<DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gZGVwbG95>> as Production.OpenShiftClusterA.DeploymentB {
+    rectangle "Pod B1\n<size:16>[Deployment Node]</size>\n\n<img:https://static.structurizr.com/themes/kubernetes-v0.3/pod-256.png{scale=0.28125}>" <<DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gcG9k>> as Production.OpenShiftClusterA.DeploymentB.PodB1 {
+      rectangle "==Workload B (A)\n<size:16>[Container: Container]</size>\n\nApplication instance running in a pod" <<Element-RWxlbWVudCxQb2Q=>> as Production.OpenShiftClusterA.DeploymentB.PodB1.WorkloadBA_1
+    }
+
+    rectangle "Pod B2\n<size:16>[Deployment Node]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.OpenShiftClusterA.DeploymentB.PodB2 {
+      rectangle "==Workload B (A)\n<size:16>[Container: Container]</size>\n\nApplication instance running in a pod" <<Element-RWxlbWVudCxQb2Q=>> as Production.OpenShiftClusterA.DeploymentB.PodB2.WorkloadBA_1
+    }
+
+  }
+
+}
+
+rectangle "OpenShift Cluster B\n<size:16>[Deployment Node]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.OpenShiftClusterB {
+  rectangle "Services" <<Group-U2VydmljZXM=>> as groupU2VydmljZXM= {
+    rectangle "Service A\n<size:16>[Deployment Node]</size>\n\n<img:https://static.structurizr.com/themes/kubernetes-v0.3/svc-256.png{scale=0.28125}>" <<DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gc3Zj>> as Production.OpenShiftClusterB.ServiceA {
+      rectangle "==Service A (B)\n<size:16>[Container: Kubernetes Service]</size>\n\nKubernetes Service" <<Element-RWxlbWVudCxLOHNTZXJ2aWNl>> as Production.OpenShiftClusterB.ServiceA.ServiceAB_1
+    }
+
+    rectangle "Service B\n<size:16>[Deployment Node]</size>\n\n<img:https://static.structurizr.com/themes/kubernetes-v0.3/svc-256.png{scale=0.28125}>" <<DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gc3Zj>> as Production.OpenShiftClusterB.ServiceB {
+      rectangle "==Service B (B)\n<size:16>[Container: Kubernetes Service]</size>\n\nKubernetes Service" <<Element-RWxlbWVudCxLOHNTZXJ2aWNl>> as Production.OpenShiftClusterB.ServiceB.ServiceBB_1
+    }
+
+  }
+
+  rectangle "Ingress\n<size:16>[Deployment Node: Ingress layer]</size>\n\n<img:https://static.structurizr.com/themes/kubernetes-v0.3/ing-256.png{scale=0.28125}>" <<DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gaW5n>> as Production.OpenShiftClusterB.Ingress {
+    rectangle "==Ingress Controller (B)\n<size:16>[Container: OpenShift Router]</size>\n\nRoutes inbound traffic" <<Element-RWxlbWVudCxJbmdyZXNz>> as Production.OpenShiftClusterB.Ingress.IngressControllerB_1
+  }
+
+  rectangle "Deployment A\n<size:16>[Deployment Node: Kubernetes Deployment]</size>\n\n<img:https://static.structurizr.com/themes/kubernetes-v0.3/deploy-256.png{scale=0.28125}>" <<DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gZGVwbG95>> as Production.OpenShiftClusterB.DeploymentA {
+    rectangle "Pod A1\n<size:16>[Deployment Node]</size>\n\n<img:https://static.structurizr.com/themes/kubernetes-v0.3/pod-256.png{scale=0.28125}>" <<DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gcG9k>> as Production.OpenShiftClusterB.DeploymentA.PodA1 {
+      rectangle "==Workload A (B)\n<size:16>[Container: Container]</size>\n\nApplication instance running in a pod" <<Element-RWxlbWVudCxQb2Q=>> as Production.OpenShiftClusterB.DeploymentA.PodA1.WorkloadAB_1
+      rectangle "Pod A2\n<size:16>[Deployment Node]</size>\n\n<img:https://static.structurizr.com/themes/kubernetes-v0.3/pod-256.png{scale=0.28125}>" <<DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gcG9k>> as Production.OpenShiftClusterB.DeploymentA.PodA1.PodA2 {
+        rectangle "==Workload A (B)\n<size:16>[Container: Container]</size>\n\nApplication instance running in a pod" <<Element-RWxlbWVudCxQb2Q=>> as Production.OpenShiftClusterB.DeploymentA.PodA1.PodA2.WorkloadAB_1
+      }
+
+    }
+
+  }
+
+  rectangle "Deployment B\n<size:16>[Deployment Node]</size>\n\n<img:https://static.structurizr.com/themes/kubernetes-v0.3/deploy-256.png{scale=0.28125}>" <<DeploymentNode-RWxlbWVudCxLdWJlcm5ldGVzIC0gZGVwbG95>> as Production.OpenShiftClusterB.DeploymentB {
+    rectangle "Pod B1\n<size:16>[Deployment Node]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.OpenShiftClusterB.DeploymentB.PodB1 {
+      rectangle "==Workload B (B)\n<size:16>[Container: Container]</size>\n\nApplication instance running in a pod" <<Element-RWxlbWVudCxQb2Q=>> as Production.OpenShiftClusterB.DeploymentB.PodB1.WorkloadBB_1
+    }
+
+    rectangle "Pod B2\n<size:16>[Deployment Node]</size>" <<DeploymentNode-RWxlbWVudA==>> as Production.OpenShiftClusterB.DeploymentB.PodB2 {
+      rectangle "==Workload B (B)\n<size:16>[Container: Container]</size>\n\nApplication instance running in a pod" <<Element-RWxlbWVudCxQb2Q=>> as Production.OpenShiftClusterB.DeploymentB.PodB2.WorkloadBB_1
+    }
+
+  }
+
+}
+
+Production.ClientDevice.Client_1 --> Production.EdgeDMZ.F5LoadBalancer_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Sends requests\n<size:16>[HTTPS]</size>"
+Production.EdgeDMZ.F5LoadBalancer_1 --> Production.OpenShiftClusterA.Ingress.IngressControllerA_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Forwards traffic (cluster A)\n<size:16>[HTTPS]</size>"
+Production.OpenShiftClusterA.Ingress.IngressControllerA_1 --> Production.OpenShiftClusterA.ServiceA.ServiceAA_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Routes (host/path)\n<size:16>[HTTP(S)]</size>"
+Production.OpenShiftClusterA.Ingress.IngressControllerA_1 --> Production.OpenShiftClusterA.ServiceB.ServiceBA_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Routes (host/path)\n<size:16>[HTTP(S)]</size>"
+Production.OpenShiftClusterA.ServiceA.ServiceAA_1 --> Production.OpenShiftClusterA.DeploymentA.PodA1.WorkloadAA_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Load-balances to endpoints\n<size:16>[TCP]</size>"
+Production.OpenShiftClusterA.ServiceA.ServiceAA_1 --> Production.OpenShiftClusterA.DeploymentA.PodA1.PodA2.WorkloadAA_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Load-balances to endpoints\n<size:16>[TCP]</size>"
+Production.OpenShiftClusterA.ServiceB.ServiceBA_1 --> Production.OpenShiftClusterA.DeploymentB.PodB1.WorkloadBA_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Load-balances to endpoints\n<size:16>[TCP]</size>"
+Production.OpenShiftClusterA.ServiceB.ServiceBA_1 --> Production.OpenShiftClusterA.DeploymentB.PodB2.WorkloadBA_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Load-balances to endpoints\n<size:16>[TCP]</size>"
+Production.EdgeDMZ.F5LoadBalancer_1 --> Production.OpenShiftClusterB.Ingress.IngressControllerB_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Forwards traffic (cluster B)\n<size:16>[HTTPS]</size>"
+Production.OpenShiftClusterB.Ingress.IngressControllerB_1 --> Production.OpenShiftClusterB.ServiceA.ServiceAB_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Routes (host/path)\n<size:16>[HTTP(S)]</size>"
+Production.OpenShiftClusterB.Ingress.IngressControllerB_1 --> Production.OpenShiftClusterB.ServiceB.ServiceBB_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Routes (host/path)\n<size:16>[HTTP(S)]</size>"
+Production.OpenShiftClusterB.ServiceA.ServiceAB_1 --> Production.OpenShiftClusterB.DeploymentA.PodA1.WorkloadAB_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Load-balances to endpoints\n<size:16>[TCP]</size>"
+Production.OpenShiftClusterB.ServiceA.ServiceAB_1 --> Production.OpenShiftClusterB.DeploymentA.PodA1.PodA2.WorkloadAB_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Load-balances to endpoints\n<size:16>[TCP]</size>"
+Production.OpenShiftClusterB.ServiceB.ServiceBB_1 --> Production.OpenShiftClusterB.DeploymentB.PodB1.WorkloadBB_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Load-balances to endpoints\n<size:16>[TCP]</size>"
+Production.OpenShiftClusterB.ServiceB.ServiceBB_1 --> Production.OpenShiftClusterB.DeploymentB.PodB2.WorkloadBB_1 <<Relationship-UmVsYXRpb25zaGlw>> : "Load-balances to endpoints\n<size:16>[TCP]</size>"
+
+@enduml

@@ -1,0 +1,1087 @@
+{
+  "configuration" : { },
+  "description" : "Description",
+  "documentation" : { },
+  "id" : 1,
+  "lastModifiedAgent" : "structurizr-ui",
+  "lastModifiedDate" : "2026-01-25T15:47:34Z",
+  "model" : {
+    "deploymentNodes" : [ {
+      "containerInstances" : [ {
+        "containerId" : "3",
+        "deploymentGroups" : [ "Default" ],
+        "environment" : "Production",
+        "id" : "38",
+        "instanceId" : 1,
+        "properties" : {
+          "structurizr.dsl.identifier" : "2c4f2ece-d61b-469e-8dfc-a0da9dc92148"
+        },
+        "relationships" : [ {
+          "description" : "Sends requests",
+          "destinationId" : "40",
+          "id" : "41",
+          "linkedRelationshipId" : "19",
+          "sourceId" : "38",
+          "technology" : "HTTPS"
+        } ],
+        "tags" : "Container Instance"
+      } ],
+      "environment" : "Production",
+      "id" : "37",
+      "instances" : "1",
+      "name" : "Client Device",
+      "properties" : {
+        "structurizr.dsl.identifier" : "6b1b3317-26b0-40d5-8bd9-821ea8087d19"
+      },
+      "tags" : "Element,Deployment Node,1",
+      "technology" : "Laptop/Phone"
+    }, {
+      "containerInstances" : [ {
+        "containerId" : "5",
+        "deploymentGroups" : [ "Default" ],
+        "environment" : "Production",
+        "id" : "40",
+        "instanceId" : 1,
+        "properties" : {
+          "structurizr.dsl.identifier" : "57d58b7b-fc44-4fbe-96b4-8e754e8608dd"
+        },
+        "relationships" : [ {
+          "description" : "Forwards traffic (cluster A)",
+          "destinationId" : "44",
+          "id" : "45",
+          "linkedRelationshipId" : "23",
+          "sourceId" : "40",
+          "technology" : "HTTPS"
+        }, {
+          "description" : "Forwards traffic (cluster B)",
+          "destinationId" : "68",
+          "id" : "69",
+          "linkedRelationshipId" : "27",
+          "sourceId" : "40",
+          "technology" : "HTTPS"
+        } ],
+        "tags" : "Container Instance"
+      } ],
+      "environment" : "Production",
+      "id" : "39",
+      "instances" : "1",
+      "name" : "Edge / DMZ",
+      "properties" : {
+        "structurizr.dsl.identifier" : "edgeNode"
+      },
+      "tags" : "Element,Deployment Node"
+    }, {
+      "children" : [ {
+        "containerInstances" : [ {
+          "containerId" : "7",
+          "deploymentGroups" : [ "Default" ],
+          "environment" : "Production",
+          "id" : "44",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "dbbf8ccd-9320-47c9-a85b-3a9d051721ce"
+          },
+          "relationships" : [ {
+            "description" : "Routes (host/path)",
+            "destinationId" : "47",
+            "id" : "48",
+            "linkedRelationshipId" : "29",
+            "sourceId" : "44",
+            "technology" : "HTTP(S)"
+          }, {
+            "description" : "Routes (host/path)",
+            "destinationId" : "50",
+            "id" : "51",
+            "linkedRelationshipId" : "30",
+            "sourceId" : "44",
+            "technology" : "HTTP(S)"
+          } ],
+          "tags" : "Container Instance"
+        } ],
+        "environment" : "Production",
+        "id" : "43",
+        "instances" : "1",
+        "name" : "Ingress",
+        "properties" : {
+          "structurizr.dsl.identifier" : "6fa6c784-151c-49e7-bc02-a12c9df57c30"
+        },
+        "tags" : "Element,Deployment Node,1,Kubernetes - ing",
+        "technology" : "Ingress layer"
+      }, {
+        "containerInstances" : [ {
+          "containerId" : "8",
+          "deploymentGroups" : [ "Default" ],
+          "environment" : "Production",
+          "id" : "47",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "eba311d4-587a-4286-bbd5-8b9ea57e3d62"
+          },
+          "relationships" : [ {
+            "description" : "Load-balances to endpoints",
+            "destinationId" : "54",
+            "id" : "55",
+            "linkedRelationshipId" : "31",
+            "sourceId" : "47",
+            "technology" : "TCP"
+          }, {
+            "description" : "Load-balances to endpoints",
+            "destinationId" : "57",
+            "id" : "58",
+            "linkedRelationshipId" : "31",
+            "sourceId" : "47",
+            "technology" : "TCP"
+          } ],
+          "tags" : "Container Instance"
+        } ],
+        "environment" : "Production",
+        "group" : "Services",
+        "id" : "46",
+        "instances" : "1",
+        "name" : "Service A",
+        "properties" : {
+          "structurizr.dsl.identifier" : "14d2a8e5-139e-45f2-b4e6-86528e9cfe93"
+        },
+        "tags" : "Element,Deployment Node,Kubernetes - svc"
+      }, {
+        "containerInstances" : [ {
+          "containerId" : "9",
+          "deploymentGroups" : [ "Default" ],
+          "environment" : "Production",
+          "id" : "50",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "c2c909e4-8668-4106-b8fc-bddac47cc9b8"
+          },
+          "relationships" : [ {
+            "description" : "Load-balances to endpoints",
+            "destinationId" : "61",
+            "id" : "62",
+            "linkedRelationshipId" : "32",
+            "sourceId" : "50",
+            "technology" : "TCP"
+          }, {
+            "description" : "Load-balances to endpoints",
+            "destinationId" : "64",
+            "id" : "65",
+            "linkedRelationshipId" : "32",
+            "sourceId" : "50",
+            "technology" : "TCP"
+          } ],
+          "tags" : "Container Instance"
+        } ],
+        "environment" : "Production",
+        "group" : "Services",
+        "id" : "49",
+        "instances" : "1",
+        "name" : "Service B",
+        "properties" : {
+          "structurizr.dsl.identifier" : "7a798fde-169e-49c5-8c6f-ec4ea24752b3"
+        },
+        "tags" : "Element,Deployment Node,Kubernetes - svc"
+      }, {
+        "children" : [ {
+          "children" : [ {
+            "containerInstances" : [ {
+              "containerId" : "10",
+              "deploymentGroups" : [ "Default" ],
+              "environment" : "Production",
+              "id" : "57",
+              "instanceId" : 1,
+              "properties" : {
+                "structurizr.dsl.identifier" : "cdfc2e6a-3163-40a1-a2a9-89fdcafa4bdf"
+              },
+              "tags" : "Container Instance"
+            } ],
+            "environment" : "Production",
+            "id" : "56",
+            "instances" : "1",
+            "name" : "Pod A2",
+            "properties" : {
+              "structurizr.dsl.identifier" : "b1f01780-42f3-4c6f-9d82-a5b84dd34e06"
+            },
+            "tags" : "Element,Deployment Node,Kubernetes - pod"
+          } ],
+          "containerInstances" : [ {
+            "containerId" : "10",
+            "deploymentGroups" : [ "Default" ],
+            "environment" : "Production",
+            "id" : "54",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "c2231e12-51d2-4539-a0eb-0751220513b6"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "environment" : "Production",
+          "id" : "53",
+          "instances" : "1",
+          "name" : "Pod A1",
+          "properties" : {
+            "structurizr.dsl.identifier" : "8d4fd2c7-d103-4cd6-bb80-4331acea1183"
+          },
+          "tags" : "Element,Deployment Node,Kubernetes - pod"
+        } ],
+        "description" : "1",
+        "environment" : "Production",
+        "id" : "52",
+        "instances" : "1",
+        "name" : "Deployment A",
+        "properties" : {
+          "structurizr.dsl.identifier" : "ecc68186-f99d-43a7-9eec-f40e6105fe0a"
+        },
+        "tags" : "Element,Deployment Node,Kubernetes - deploy"
+      }, {
+        "children" : [ {
+          "containerInstances" : [ {
+            "containerId" : "11",
+            "deploymentGroups" : [ "Default" ],
+            "environment" : "Production",
+            "id" : "61",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "ab32690e-b68f-4189-957f-aeb57bd77d7f"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "environment" : "Production",
+          "id" : "60",
+          "instances" : "1",
+          "name" : "Pod B1",
+          "properties" : {
+            "structurizr.dsl.identifier" : "0ec14c3b-d254-474a-a8da-a6efec846a79"
+          },
+          "tags" : "Element,Deployment Node,Kubernetes - pod"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "11",
+            "deploymentGroups" : [ "Default" ],
+            "environment" : "Production",
+            "id" : "64",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "4cfb3c9c-d215-43b4-9a9c-5f50bb43981a"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "environment" : "Production",
+          "id" : "63",
+          "instances" : "1",
+          "name" : "Pod B2",
+          "properties" : {
+            "structurizr.dsl.identifier" : "b5b8c423-c692-42a5-878c-42dcec43c293"
+          },
+          "tags" : "Element,Deployment Node"
+        } ],
+        "description" : "1",
+        "environment" : "Production",
+        "id" : "59",
+        "instances" : "1",
+        "name" : "Deployment B",
+        "properties" : {
+          "structurizr.dsl.identifier" : "9129fb22-5c2d-49fe-ad33-336096624fbc"
+        },
+        "tags" : "Element,Deployment Node,Kubernetes - deploy"
+      } ],
+      "environment" : "Production",
+      "id" : "42",
+      "instances" : "1",
+      "name" : "OpenShift Cluster A",
+      "properties" : {
+        "structurizr.dsl.identifier" : "clusterA"
+      },
+      "tags" : "Element,Deployment Node"
+    }, {
+      "children" : [ {
+        "containerInstances" : [ {
+          "containerId" : "12",
+          "deploymentGroups" : [ "Default" ],
+          "environment" : "Production",
+          "id" : "68",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "c15732bb-234d-41f2-8f2f-8f7b49eaec1a"
+          },
+          "relationships" : [ {
+            "description" : "Routes (host/path)",
+            "destinationId" : "71",
+            "id" : "72",
+            "linkedRelationshipId" : "33",
+            "sourceId" : "68",
+            "technology" : "HTTP(S)"
+          }, {
+            "description" : "Routes (host/path)",
+            "destinationId" : "74",
+            "id" : "75",
+            "linkedRelationshipId" : "34",
+            "sourceId" : "68",
+            "technology" : "HTTP(S)"
+          } ],
+          "tags" : "Container Instance"
+        } ],
+        "environment" : "Production",
+        "id" : "67",
+        "instances" : "1",
+        "name" : "Ingress",
+        "properties" : {
+          "structurizr.dsl.identifier" : "cd1db43e-ad04-4217-8e5f-37b0b3086279"
+        },
+        "tags" : "Element,Deployment Node,1,Kubernetes - ing",
+        "technology" : "Ingress layer"
+      }, {
+        "containerInstances" : [ {
+          "containerId" : "13",
+          "deploymentGroups" : [ "Default" ],
+          "environment" : "Production",
+          "id" : "71",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "d014e5c7-25b8-43ee-ba4a-7d0878d3a9cb"
+          },
+          "relationships" : [ {
+            "description" : "Load-balances to endpoints",
+            "destinationId" : "78",
+            "id" : "79",
+            "linkedRelationshipId" : "35",
+            "sourceId" : "71",
+            "technology" : "TCP"
+          }, {
+            "description" : "Load-balances to endpoints",
+            "destinationId" : "81",
+            "id" : "82",
+            "linkedRelationshipId" : "35",
+            "sourceId" : "71",
+            "technology" : "TCP"
+          } ],
+          "tags" : "Container Instance"
+        } ],
+        "environment" : "Production",
+        "group" : "Services",
+        "id" : "70",
+        "instances" : "1",
+        "name" : "Service A",
+        "properties" : {
+          "structurizr.dsl.identifier" : "307231a8-3288-42df-af2f-4a529c44eadc"
+        },
+        "tags" : "Element,Deployment Node,Kubernetes - svc"
+      }, {
+        "containerInstances" : [ {
+          "containerId" : "14",
+          "deploymentGroups" : [ "Default" ],
+          "environment" : "Production",
+          "id" : "74",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "125f0b61-4197-4828-a276-09d83af7b041"
+          },
+          "relationships" : [ {
+            "description" : "Load-balances to endpoints",
+            "destinationId" : "85",
+            "id" : "86",
+            "linkedRelationshipId" : "36",
+            "sourceId" : "74",
+            "technology" : "TCP"
+          }, {
+            "description" : "Load-balances to endpoints",
+            "destinationId" : "88",
+            "id" : "89",
+            "linkedRelationshipId" : "36",
+            "sourceId" : "74",
+            "technology" : "TCP"
+          } ],
+          "tags" : "Container Instance"
+        } ],
+        "environment" : "Production",
+        "group" : "Services",
+        "id" : "73",
+        "instances" : "1",
+        "name" : "Service B",
+        "properties" : {
+          "structurizr.dsl.identifier" : "bd79da60-2f92-4406-8de8-6005048a1f5f"
+        },
+        "tags" : "Element,Deployment Node,Kubernetes - svc"
+      }, {
+        "children" : [ {
+          "children" : [ {
+            "containerInstances" : [ {
+              "containerId" : "15",
+              "deploymentGroups" : [ "Default" ],
+              "environment" : "Production",
+              "id" : "81",
+              "instanceId" : 1,
+              "properties" : {
+                "structurizr.dsl.identifier" : "9e81bdb3-325b-4532-abf2-19f76ac87d10"
+              },
+              "tags" : "Container Instance"
+            } ],
+            "environment" : "Production",
+            "id" : "80",
+            "instances" : "1",
+            "name" : "Pod A2",
+            "properties" : {
+              "structurizr.dsl.identifier" : "0bae7c82-6485-4144-9369-13bc76cd59f5"
+            },
+            "tags" : "Element,Deployment Node,Kubernetes - pod"
+          } ],
+          "containerInstances" : [ {
+            "containerId" : "15",
+            "deploymentGroups" : [ "Default" ],
+            "environment" : "Production",
+            "id" : "78",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "f7252c3d-6065-40a0-b6df-e7016fd1bd4d"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "environment" : "Production",
+          "id" : "77",
+          "instances" : "1",
+          "name" : "Pod A1",
+          "properties" : {
+            "structurizr.dsl.identifier" : "3432f105-c9ca-430d-a6fd-d4b823977f44"
+          },
+          "tags" : "Element,Deployment Node,Kubernetes - pod"
+        } ],
+        "environment" : "Production",
+        "id" : "76",
+        "instances" : "1",
+        "name" : "Deployment A",
+        "properties" : {
+          "structurizr.dsl.identifier" : "8e4b73e0-c8b1-4f21-9c0d-96948dc72391"
+        },
+        "tags" : "Element,Deployment Node,1,Kubernetes - deploy",
+        "technology" : "Kubernetes Deployment"
+      }, {
+        "children" : [ {
+          "containerInstances" : [ {
+            "containerId" : "16",
+            "deploymentGroups" : [ "Default" ],
+            "environment" : "Production",
+            "id" : "85",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "285793dd-0c71-49e1-8d80-deef49aae057"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "environment" : "Production",
+          "id" : "84",
+          "instances" : "1",
+          "name" : "Pod B1",
+          "properties" : {
+            "structurizr.dsl.identifier" : "b42b4ab0-eef5-4698-80e8-346c8ee182e9"
+          },
+          "tags" : "Element,Deployment Node"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "16",
+            "deploymentGroups" : [ "Default" ],
+            "environment" : "Production",
+            "id" : "88",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "8ccddd24-a9af-4f26-9e06-eacc99acd569"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "environment" : "Production",
+          "id" : "87",
+          "instances" : "1",
+          "name" : "Pod B2",
+          "properties" : {
+            "structurizr.dsl.identifier" : "38f67ce7-3a35-4be6-9885-01a497be8478"
+          },
+          "tags" : "Element,Deployment Node"
+        } ],
+        "description" : "1",
+        "environment" : "Production",
+        "id" : "83",
+        "instances" : "1",
+        "name" : "Deployment B",
+        "properties" : {
+          "structurizr.dsl.identifier" : "c7ddeaa2-e1b2-4900-9fe6-526027703f23"
+        },
+        "tags" : "Element,Deployment Node,Kubernetes - deploy"
+      } ],
+      "environment" : "Production",
+      "id" : "66",
+      "instances" : "1",
+      "name" : "OpenShift Cluster B",
+      "properties" : {
+        "structurizr.dsl.identifier" : "clusterB"
+      },
+      "tags" : "Element,Deployment Node"
+    } ],
+    "people" : [ {
+      "id" : "1",
+      "name" : "User",
+      "properties" : {
+        "structurizr.dsl.identifier" : "user"
+      },
+      "relationships" : [ {
+        "description" : "Uses",
+        "destinationId" : "3",
+        "id" : "17",
+        "sourceId" : "1",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Uses",
+        "destinationId" : "2",
+        "id" : "18",
+        "linkedRelationshipId" : "17",
+        "sourceId" : "1"
+      } ],
+      "tags" : "Element,Person"
+    } ],
+    "softwareSystems" : [ {
+      "containers" : [ {
+        "description" : "Used by the client",
+        "documentation" : { },
+        "id" : "3",
+        "name" : "Client",
+        "properties" : {
+          "structurizr.dsl.identifier" : "browser"
+        },
+        "relationships" : [ {
+          "description" : "Sends requests",
+          "destinationId" : "5",
+          "id" : "19",
+          "sourceId" : "3",
+          "tags" : "Relationship",
+          "technology" : "HTTPS"
+        }, {
+          "description" : "Sends requests",
+          "destinationId" : "4",
+          "id" : "20",
+          "linkedRelationshipId" : "19",
+          "sourceId" : "3",
+          "technology" : "HTTPS"
+        } ],
+        "tags" : "Element,Container,Client",
+        "technology" : "Web Browser"
+      } ],
+      "documentation" : { },
+      "id" : "2",
+      "name" : "Client Device",
+      "properties" : {
+        "structurizr.dsl.identifier" : "clientDevice"
+      },
+      "relationships" : [ {
+        "description" : "Sends requests",
+        "destinationId" : "5",
+        "id" : "21",
+        "linkedRelationshipId" : "19",
+        "sourceId" : "2",
+        "technology" : "HTTPS"
+      }, {
+        "description" : "Sends requests",
+        "destinationId" : "4",
+        "id" : "22",
+        "linkedRelationshipId" : "19",
+        "sourceId" : "2",
+        "technology" : "HTTPS"
+      } ],
+      "tags" : "Element,Software System"
+    }, {
+      "containers" : [ {
+        "description" : "External VIP/GSLB",
+        "documentation" : { },
+        "id" : "5",
+        "name" : "F5 Load Balancer",
+        "properties" : {
+          "structurizr.dsl.identifier" : "f5"
+        },
+        "relationships" : [ {
+          "description" : "Forwards traffic (cluster A)",
+          "destinationId" : "7",
+          "id" : "23",
+          "sourceId" : "5",
+          "tags" : "Relationship",
+          "technology" : "HTTPS"
+        }, {
+          "description" : "Forwards traffic (cluster A)",
+          "destinationId" : "6",
+          "id" : "24",
+          "linkedRelationshipId" : "23",
+          "sourceId" : "5",
+          "technology" : "HTTPS"
+        }, {
+          "description" : "Forwards traffic (cluster B)",
+          "destinationId" : "12",
+          "id" : "27",
+          "sourceId" : "5",
+          "tags" : "Relationship",
+          "technology" : "HTTPS"
+        } ],
+        "tags" : "Element,Container,LB",
+        "technology" : "F5 BIG-IP"
+      } ],
+      "documentation" : { },
+      "id" : "4",
+      "name" : "Edge",
+      "properties" : {
+        "structurizr.dsl.identifier" : "edge"
+      },
+      "relationships" : [ {
+        "description" : "Forwards traffic (cluster A)",
+        "destinationId" : "7",
+        "id" : "25",
+        "linkedRelationshipId" : "23",
+        "sourceId" : "4",
+        "technology" : "HTTPS"
+      }, {
+        "description" : "Forwards traffic (cluster A)",
+        "destinationId" : "6",
+        "id" : "26",
+        "linkedRelationshipId" : "23",
+        "sourceId" : "4",
+        "technology" : "HTTPS"
+      }, {
+        "description" : "Forwards traffic (cluster B)",
+        "destinationId" : "12",
+        "id" : "28",
+        "linkedRelationshipId" : "27",
+        "sourceId" : "4",
+        "technology" : "HTTPS"
+      } ],
+      "tags" : "Element,Software System"
+    }, {
+      "containers" : [ {
+        "description" : "Routes inbound traffic",
+        "documentation" : { },
+        "id" : "7",
+        "name" : "Ingress Controller (A)",
+        "properties" : {
+          "structurizr.dsl.identifier" : "ingressA"
+        },
+        "relationships" : [ {
+          "description" : "Routes (host/path)",
+          "destinationId" : "8",
+          "id" : "29",
+          "sourceId" : "7",
+          "tags" : "Relationship",
+          "technology" : "HTTP(S)"
+        }, {
+          "description" : "Routes (host/path)",
+          "destinationId" : "9",
+          "id" : "30",
+          "sourceId" : "7",
+          "tags" : "Relationship",
+          "technology" : "HTTP(S)"
+        } ],
+        "tags" : "Element,Container,Ingress",
+        "technology" : "OpenShift Router"
+      }, {
+        "description" : "Kubernetes Service",
+        "documentation" : { },
+        "id" : "8",
+        "name" : "Service A (A)",
+        "properties" : {
+          "structurizr.dsl.identifier" : "svcA_A"
+        },
+        "relationships" : [ {
+          "description" : "Load-balances to endpoints",
+          "destinationId" : "10",
+          "id" : "31",
+          "sourceId" : "8",
+          "tags" : "Relationship",
+          "technology" : "TCP"
+        } ],
+        "tags" : "Element,Container,K8sService",
+        "technology" : "Kubernetes Service"
+      }, {
+        "description" : "Kubernetes Service",
+        "documentation" : { },
+        "id" : "9",
+        "name" : "Service B (A)",
+        "properties" : {
+          "structurizr.dsl.identifier" : "svcB_A"
+        },
+        "relationships" : [ {
+          "description" : "Load-balances to endpoints",
+          "destinationId" : "11",
+          "id" : "32",
+          "sourceId" : "9",
+          "tags" : "Relationship",
+          "technology" : "TCP"
+        } ],
+        "tags" : "Element,Container,K8sService",
+        "technology" : "Kubernetes Service"
+      }, {
+        "description" : "Application instance running in a pod",
+        "documentation" : { },
+        "id" : "10",
+        "name" : "Workload A (A)",
+        "properties" : {
+          "structurizr.dsl.identifier" : "podA_A"
+        },
+        "tags" : "Element,Container,Pod",
+        "technology" : "Container"
+      }, {
+        "description" : "Application instance running in a pod",
+        "documentation" : { },
+        "id" : "11",
+        "name" : "Workload B (A)",
+        "properties" : {
+          "structurizr.dsl.identifier" : "podB_A"
+        },
+        "tags" : "Element,Container,Pod",
+        "technology" : "Container"
+      }, {
+        "description" : "Routes inbound traffic",
+        "documentation" : { },
+        "id" : "12",
+        "name" : "Ingress Controller (B)",
+        "properties" : {
+          "structurizr.dsl.identifier" : "ingressB"
+        },
+        "relationships" : [ {
+          "description" : "Routes (host/path)",
+          "destinationId" : "13",
+          "id" : "33",
+          "sourceId" : "12",
+          "tags" : "Relationship",
+          "technology" : "HTTP(S)"
+        }, {
+          "description" : "Routes (host/path)",
+          "destinationId" : "14",
+          "id" : "34",
+          "sourceId" : "12",
+          "tags" : "Relationship",
+          "technology" : "HTTP(S)"
+        } ],
+        "tags" : "Element,Container,Ingress",
+        "technology" : "OpenShift Router"
+      }, {
+        "description" : "Kubernetes Service",
+        "documentation" : { },
+        "id" : "13",
+        "name" : "Service A (B)",
+        "properties" : {
+          "structurizr.dsl.identifier" : "svcA_B"
+        },
+        "relationships" : [ {
+          "description" : "Load-balances to endpoints",
+          "destinationId" : "15",
+          "id" : "35",
+          "sourceId" : "13",
+          "tags" : "Relationship",
+          "technology" : "TCP"
+        } ],
+        "tags" : "Element,Container,K8sService",
+        "technology" : "Kubernetes Service"
+      }, {
+        "description" : "Kubernetes Service",
+        "documentation" : { },
+        "id" : "14",
+        "name" : "Service B (B)",
+        "properties" : {
+          "structurizr.dsl.identifier" : "svcB_B"
+        },
+        "relationships" : [ {
+          "description" : "Load-balances to endpoints",
+          "destinationId" : "16",
+          "id" : "36",
+          "sourceId" : "14",
+          "tags" : "Relationship",
+          "technology" : "TCP"
+        } ],
+        "tags" : "Element,Container,K8sService",
+        "technology" : "Kubernetes Service"
+      }, {
+        "description" : "Application instance running in a pod",
+        "documentation" : { },
+        "id" : "15",
+        "name" : "Workload A (B)",
+        "properties" : {
+          "structurizr.dsl.identifier" : "podA_B"
+        },
+        "tags" : "Element,Container,Pod",
+        "technology" : "Container"
+      }, {
+        "description" : "Application instance running in a pod",
+        "documentation" : { },
+        "id" : "16",
+        "name" : "Workload B (B)",
+        "properties" : {
+          "structurizr.dsl.identifier" : "podB_B"
+        },
+        "tags" : "Element,Container,Pod",
+        "technology" : "Container"
+      } ],
+      "documentation" : { },
+      "id" : "6",
+      "name" : "OpenShift Platform",
+      "properties" : {
+        "structurizr.dsl.identifier" : "k8s"
+      },
+      "tags" : "Element,Software System"
+    } ]
+  },
+  "name" : "F5 -> Dual OpenShift Clusters",
+  "properties" : {
+    "structurizr.inspection.info" : "0",
+    "structurizr.inspection.ignore" : "0",
+    "structurizr.inspection.error" : "67",
+    "structurizr.inspection.warning" : "0",
+    "structurizr.dsl" : "d29ya3NwYWNlICJGNSAtPiBEdWFsIE9wZW5TaGlmdCBDbHVzdGVycyIgewoKICAhaWRlbnRpZmllcnMgZmxhdAoKICBtb2RlbCB7CiAgICB1c2VyID0gcGVyc29uICJVc2VyIiAiIiAiUGVyc29uIgoKICAgIGNsaWVudERldmljZSA9IHNvZnR3YXJlU3lzdGVtICJDbGllbnQgRGV2aWNlIiB7CiAgICAgIGJyb3dzZXIgPSBjb250YWluZXIgIkNsaWVudCIgIlVzZWQgYnkgdGhlIGNsaWVudCIgIldlYiBCcm93c2VyIiAiQ2xpZW50IgogICAgfQoKICAgIGVkZ2UgPSBzb2Z0d2FyZVN5c3RlbSAiRWRnZSIgewogICAgICBmNSA9IGNvbnRhaW5lciAiRjUgTG9hZCBCYWxhbmNlciIgIkV4dGVybmFsIFZJUC9HU0xCIiAiRjUgQklHLUlQIiAiTEIiCiAgICB9CgogICAgazhzID0gc29mdHdhcmVTeXN0ZW0gIk9wZW5TaGlmdCBQbGF0Zm9ybSIgewoKICAgICAgLy8gQ2x1c3RlciBBIGVsZW1lbnRzICh1bmlxdWUgbW9kZWwgZWxlbWVudHMpCiAgICAgIGluZ3Jlc3NBID0gY29udGFpbmVyICJJbmdyZXNzIENvbnRyb2xsZXIgKEEpIiAiUm91dGVzIGluYm91bmQgdHJhZmZpYyIgIk9wZW5TaGlmdCBSb3V0ZXIiICJJbmdyZXNzIgogICAgICBzdmNBX0EgICA9IGNvbnRhaW5lciAiU2VydmljZSBBIChBKSIgIkt1YmVybmV0ZXMgU2VydmljZSIgIkt1YmVybmV0ZXMgU2VydmljZSIgIks4c1NlcnZpY2UiCiAgICAgIHN2Y0JfQSAgID0gY29udGFpbmVyICJTZXJ2aWNlIEIgKEEpIiAiS3ViZXJuZXRlcyBTZXJ2aWNlIiAiS3ViZXJuZXRlcyBTZXJ2aWNlIiAiSzhzU2VydmljZSIKICAgICAgcG9kQV9BICAgPSBjb250YWluZXIgIldvcmtsb2FkIEEgKEEpIiAiQXBwbGljYXRpb24gaW5zdGFuY2UgcnVubmluZyBpbiBhIHBvZCIgIkNvbnRhaW5lciIgIlBvZCIKICAgICAgcG9kQl9BICAgPSBjb250YWluZXIgIldvcmtsb2FkIEIgKEEpIiAiQXBwbGljYXRpb24gaW5zdGFuY2UgcnVubmluZyBpbiBhIHBvZCIgIkNvbnRhaW5lciIgIlBvZCIKCiAgICAgIC8vIENsdXN0ZXIgQiBlbGVtZW50cyAobWlycm9yLCBhbHNvIHVuaXF1ZSBtb2RlbCBlbGVtZW50cykKICAgICAgaW5ncmVzc0IgPSBjb250YWluZXIgIkluZ3Jlc3MgQ29udHJvbGxlciAoQikiICJSb3V0ZXMgaW5ib3VuZCB0cmFmZmljIiAiT3BlblNoaWZ0IFJvdXRlciIgIkluZ3Jlc3MiCiAgICAgIHN2Y0FfQiAgID0gY29udGFpbmVyICJTZXJ2aWNlIEEgKEIpIiAiS3ViZXJuZXRlcyBTZXJ2aWNlIiAiS3ViZXJuZXRlcyBTZXJ2aWNlIiAiSzhzU2VydmljZSIKICAgICAgc3ZjQl9CICAgPSBjb250YWluZXIgIlNlcnZpY2UgQiAoQikiICJLdWJlcm5ldGVzIFNlcnZpY2UiICJLdWJlcm5ldGVzIFNlcnZpY2UiICJLOHNTZXJ2aWNlIgogICAgICBwb2RBX0IgICA9IGNvbnRhaW5lciAiV29ya2xvYWQgQSAoQikiICJBcHBsaWNhdGlvbiBpbnN0YW5jZSBydW5uaW5nIGluIGEgcG9kIiAiQ29udGFpbmVyIiAiUG9kIgogICAgICBwb2RCX0IgICA9IGNvbnRhaW5lciAiV29ya2xvYWQgQiAoQikiICJBcHBsaWNhdGlvbiBpbnN0YW5jZSBydW5uaW5nIGluIGEgcG9kIiAiQ29udGFpbmVyIiAiUG9kIgogICAgfQoKICAgIC8vIFJlbGF0aW9uc2hpcHMKICAgIHVzZXIgLT4gYnJvd3NlciAiVXNlcyIKICAgIGJyb3dzZXIgLT4gZjUgIlNlbmRzIHJlcXVlc3RzIiAiSFRUUFMiCiAgICBmNSAtPiBpbmdyZXNzQSAiRm9yd2FyZHMgdHJhZmZpYyAoY2x1c3RlciBBKSIgIkhUVFBTIgogICAgZjUgLT4gaW5ncmVzc0IgIkZvcndhcmRzIHRyYWZmaWMgKGNsdXN0ZXIgQikiICJIVFRQUyIKCiAgICBpbmdyZXNzQSAtPiBzdmNBX0EgIlJvdXRlcyAoaG9zdC9wYXRoKSIgIkhUVFAoUykiCiAgICBpbmdyZXNzQSAtPiBzdmNCX0EgIlJvdXRlcyAoaG9zdC9wYXRoKSIgIkhUVFAoUykiCiAgICBzdmNBX0EgLT4gcG9kQV9BICJMb2FkLWJhbGFuY2VzIHRvIGVuZHBvaW50cyIgIlRDUCIKICAgIHN2Y0JfQSAtPiBwb2RCX0EgIkxvYWQtYmFsYW5jZXMgdG8gZW5kcG9pbnRzIiAiVENQIgoKICAgIGluZ3Jlc3NCIC0+IHN2Y0FfQiAiUm91dGVzIChob3N0L3BhdGgpIiAiSFRUUChTKSIKICAgIGluZ3Jlc3NCIC0+IHN2Y0JfQiAiUm91dGVzIChob3N0L3BhdGgpIiAiSFRUUChTKSIKICAgIHN2Y0FfQiAtPiBwb2RBX0IgIkxvYWQtYmFsYW5jZXMgdG8gZW5kcG9pbnRzIiAiVENQIgogICAgc3ZjQl9CIC0+IHBvZEJfQiAiTG9hZC1iYWxhbmNlcyB0byBlbmRwb2ludHMiICJUQ1AiCgogICAgLy8gRGVwbG95bWVudCBtb2RlbAogICAgLy8gRGVwbG95bWVudCBtb2RlbAogICAgcHJvZCA9IGRlcGxveW1lbnRFbnZpcm9ubWVudCAiUHJvZHVjdGlvbiIgewogICAgICBkZXBsb3ltZW50Tm9kZSAiQ2xpZW50IERldmljZSIgIiIgIkxhcHRvcC9QaG9uZSIgMSB7CiAgICAgICAgY29udGFpbmVySW5zdGFuY2UgYnJvd3NlcgogICAgICB9CgogICAgICBlZGdlTm9kZSA9IGRlcGxveW1lbnROb2RlICJFZGdlIC8gRE1aIiB7CiAgICAgICAgY29udGFpbmVySW5zdGFuY2UgZjUKICAgICAgfQoKICAgICAgY2x1c3RlckEgPSBkZXBsb3ltZW50Tm9kZSAiT3BlblNoaWZ0IENsdXN0ZXIgQSIgewogICAgICAgIGRlcGxveW1lbnROb2RlICJJbmdyZXNzIiAiIiAiSW5ncmVzcyBsYXllciIgMSB7CiAgICAgICAgICB0YWdzICJLdWJlcm5ldGVzIC0gaW5nIgogICAgICAgICAgY29udGFpbmVySW5zdGFuY2UgaW5ncmVzc0EKICAgICAgICB9CgogICAgICAgIGdyb3VwICJTZXJ2aWNlcyIgewogICAgICAgICAgZGVwbG95bWVudE5vZGUgIlNlcnZpY2UgQSIgewogICAgICAgICAgICB0YWdzICJLdWJlcm5ldGVzIC0gc3ZjIgogICAgICAgICAgICBjb250YWluZXJJbnN0YW5jZSBzdmNBX0EKICAgICAgICAgIH0KICAgICAgICAgIGRlcGxveW1lbnROb2RlICJTZXJ2aWNlIEIiIHsKICAgICAgICAgICAgdGFncyAiS3ViZXJuZXRlcyAtIHN2YyIKICAgICAgICAgICAgY29udGFpbmVySW5zdGFuY2Ugc3ZjQl9BCiAgICAgICAgICB9CiAgICAgICAgfQoKICAgICAgICBkZXBsb3ltZW50Tm9kZSAiRGVwbG95bWVudCBBIiAxIHsKICAgICAgICAgIHRhZ3MgIkt1YmVybmV0ZXMgLSBkZXBsb3kiCiAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiUG9kIEExIiB7CiAgICAgICAgICAgIHRhZ3MgIkt1YmVybmV0ZXMgLSBwb2QiCiAgICAgICAgICAgIGNvbnRhaW5lckluc3RhbmNlIHBvZEFfQQogICAgICAgICAgZGVwbG95bWVudE5vZGUgIlBvZCBBMiIgewogICAgICAgICAgICB0YWdzICJLdWJlcm5ldGVzIC0gcG9kIgogICAgICAgICAgICBjb250YWluZXJJbnN0YW5jZSBwb2RBX0EKICAgICAgICAgIH0KICAgICAgICAgIH0KICAgICAgICB9CgogICAgICAgIGRlcGxveW1lbnROb2RlICJEZXBsb3ltZW50IEIiIDEgewogICAgICAgICAgdGFncyAiS3ViZXJuZXRlcyAtIGRlcGxveSIKICAgICAgICAgIGRlcGxveW1lbnROb2RlICJQb2QgQjEiIHsKICAgICAgICAgICAgdGFncyAiS3ViZXJuZXRlcyAtIHBvZCIKICAgICAgICAgICAgY29udGFpbmVySW5zdGFuY2UgcG9kQl9BCiAgICAgICAgICB9CiAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiUG9kIEIyIiB7CiAgICAgICAgICAgIGNvbnRhaW5lckluc3RhbmNlIHBvZEJfQQogICAgICAgICAgfQogICAgICAgIH0KICAgICAgfQoKICAgICAgY2x1c3RlckIgPSBkZXBsb3ltZW50Tm9kZSAiT3BlblNoaWZ0IENsdXN0ZXIgQiIgewogICAgICAgIGRlcGxveW1lbnROb2RlICJJbmdyZXNzIiAiIiAiSW5ncmVzcyBsYXllciIgMSB7CiAgICAgICAgICB0YWdzICJLdWJlcm5ldGVzIC0gaW5nIgogICAgICAgICAgY29udGFpbmVySW5zdGFuY2UgaW5ncmVzc0IKICAgICAgICB9CgogICAgICAgIGdyb3VwICJTZXJ2aWNlcyIgewogICAgICAgICAgZGVwbG95bWVudE5vZGUgIlNlcnZpY2UgQSIgewogICAgICAgICAgICB0YWdzICJLdWJlcm5ldGVzIC0gc3ZjIgogICAgICAgICAgICBjb250YWluZXJJbnN0YW5jZSBzdmNBX0IKICAgICAgICAgIH0KICAgICAgICAgIGRlcGxveW1lbnROb2RlICJTZXJ2aWNlIEIiIHsKICAgICAgICAgICAgdGFncyAiS3ViZXJuZXRlcyAtIHN2YyIKICAgICAgICAgICAgY29udGFpbmVySW5zdGFuY2Ugc3ZjQl9CCiAgICAgICAgICB9CiAgICAgICAgfQoKICAgICAgICBkZXBsb3ltZW50Tm9kZSAiRGVwbG95bWVudCBBIiAiIiAiS3ViZXJuZXRlcyBEZXBsb3ltZW50IiAxIHsKICAgICAgICAgIHRhZ3MgIkt1YmVybmV0ZXMgLSBkZXBsb3kiCiAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiUG9kIEExIiB7CiAgICAgICAgICAgIHRhZ3MgIkt1YmVybmV0ZXMgLSBwb2QiCiAgICAgICAgICAgIGNvbnRhaW5lckluc3RhbmNlIHBvZEFfQgogICAgICAgICAgZGVwbG95bWVudE5vZGUgIlBvZCBBMiIgewogICAgICAgICAgICB0YWdzICJLdWJlcm5ldGVzIC0gcG9kIgogICAgICAgICAgICBjb250YWluZXJJbnN0YW5jZSBwb2RBX0IKICAgICAgICAgIH0KICAgICAgICAgIH0KICAgICAgICB9CgogICAgICAgIGRlcGxveW1lbnROb2RlICJEZXBsb3ltZW50IEIiIDEgewogICAgICAgICAgdGFncyAiS3ViZXJuZXRlcyAtIGRlcGxveSIKICAgICAgICAgIGRlcGxveW1lbnROb2RlICJQb2QgQjEiIHsKICAgICAgICAgICAgY29udGFpbmVySW5zdGFuY2UgcG9kQl9CCiAgICAgICAgICB9CiAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiUG9kIEIyIiB7CiAgICAgICAgICAgIGNvbnRhaW5lckluc3RhbmNlIHBvZEJfQgogICAgICAgICAgfQogICAgICAgIH0KICAgICAgfQogICAgfQogIH0KCiAgdmlld3MgewogICAgdGhlbWUgaHR0cHM6Ly9zdGF0aWMuc3RydWN0dXJpenIuY29tL3RoZW1lcy9rdWJlcm5ldGVzLXYwLjMvdGhlbWUuanNvbgogICAgZGVwbG95bWVudCAqIHByb2QgIm9wZW5zaGlmdCIgewogICAgICBpbmNsdWRlICoKICAgICAgYXV0b0xheW91dCBscgogICAgfQoKICAgIHN0eWxlcyB7CiAgICAgIGVsZW1lbnQgIlBlcnNvbiIgewogICAgICAgIHNoYXBlIFBlcnNvbgogICAgICB9CgogICAgZWxlbWVudCAiQ2xpZW50IiB7CiAgICAgICAgc2hhcGUgUGVyc29uCiAgICAgIH0KCiAgICAgIGVsZW1lbnQgIkxCIiB7CiAgICAgICAgc2hhcGUgUm91bmRlZEJveAogICAgICB9CiAgICAgIGVsZW1lbnQgIkluZ3Jlc3MiIHsKICAgICAgICBzaGFwZSBSb3VuZGVkQm94CiAgICAgIH0KICAgICAgZWxlbWVudCAiSzhzU2VydmljZSIgewogICAgICAgIHNoYXBlIFJvdW5kZWRCb3gKICAgICAgfQogICAgICBlbGVtZW50ICJQb2QiIHsKICAgICAgICBzaGFwZSBSb3VuZGVkQm94CiAgICAgIH0KICAgIH0KICB9Cn0="
+  },
+  "views" : {
+    "configuration" : {
+      "branding" : { },
+      "lastSavedView" : "openshift",
+      "metadataSymbols" : "SquareBrackets",
+      "styles" : {
+        "elements" : [ {
+          "shape" : "Person",
+          "tag" : "Client"
+        }, {
+          "shape" : "RoundedBox",
+          "tag" : "Ingress"
+        }, {
+          "shape" : "RoundedBox",
+          "tag" : "K8sService"
+        }, {
+          "shape" : "RoundedBox",
+          "tag" : "LB"
+        }, {
+          "shape" : "Person",
+          "tag" : "Person"
+        }, {
+          "shape" : "RoundedBox",
+          "tag" : "Pod"
+        } ]
+      },
+      "terminology" : { },
+      "themes" : [ "https://static.structurizr.com/themes/kubernetes-v0.3/theme.json" ]
+    },
+    "deploymentViews" : [ {
+      "automaticLayout" : {
+        "applied" : true,
+        "edgeSeparation" : 0,
+        "implementation" : "Graphviz",
+        "nodeSeparation" : 300,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 300,
+        "vertices" : false
+      },
+      "dimensions" : {
+        "height" : 6290,
+        "width" : 4246
+      },
+      "elements" : [ {
+        "id" : "37",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "38",
+        "x" : 219,
+        "y" : 2795
+      }, {
+        "id" : "39",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "40",
+        "x" : 919,
+        "y" : 2845
+      }, {
+        "id" : "42",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "43",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "44",
+        "x" : 1715,
+        "y" : 1758
+      }, {
+        "id" : "46",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "47",
+        "x" : 2510,
+        "y" : 1758
+      }, {
+        "id" : "49",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "50",
+        "x" : 2510,
+        "y" : 1145
+      }, {
+        "id" : "52",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "53",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "54",
+        "x" : 3515,
+        "y" : 2358
+      }, {
+        "id" : "56",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "57",
+        "x" : 3515,
+        "y" : 1758
+      }, {
+        "id" : "59",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "60",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "61",
+        "x" : 3515,
+        "y" : 220
+      }, {
+        "id" : "63",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "64",
+        "x" : 3515,
+        "y" : 833
+      }, {
+        "id" : "66",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "67",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "68",
+        "x" : 1715,
+        "y" : 3928
+      }, {
+        "id" : "70",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "71",
+        "x" : 2510,
+        "y" : 4541
+      }, {
+        "id" : "73",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "74",
+        "x" : 2510,
+        "y" : 3928
+      }, {
+        "id" : "76",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "77",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "78",
+        "x" : 3515,
+        "y" : 5453
+      }, {
+        "id" : "80",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "81",
+        "x" : 3515,
+        "y" : 4853
+      }, {
+        "id" : "83",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "84",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "85",
+        "x" : 3515,
+        "y" : 3316
+      }, {
+        "id" : "87",
+        "x" : 175,
+        "y" : 175
+      }, {
+        "id" : "88",
+        "x" : 3515,
+        "y" : 3928
+      } ],
+      "environment" : "Production",
+      "key" : "openshift",
+      "name" : "Deployment View: Production",
+      "order" : 1,
+      "relationships" : [ {
+        "id" : "41"
+      }, {
+        "id" : "45"
+      }, {
+        "id" : "48"
+      }, {
+        "id" : "51",
+        "vertices" : [ {
+          "x" : 2302,
+          "y" : 1578
+        } ]
+      }, {
+        "id" : "55",
+        "vertices" : [ {
+          "x" : 3202,
+          "y" : 2237
+        } ]
+      }, {
+        "id" : "58"
+      }, {
+        "id" : "62",
+        "vertices" : [ {
+          "x" : 3202,
+          "y" : 653
+        } ]
+      }, {
+        "id" : "65"
+      }, {
+        "id" : "69"
+      }, {
+        "id" : "72",
+        "vertices" : [ {
+          "x" : 2302,
+          "y" : 4408
+        } ]
+      }, {
+        "id" : "75"
+      }, {
+        "id" : "79",
+        "vertices" : [ {
+          "x" : 3202,
+          "y" : 5333
+        } ]
+      }, {
+        "id" : "82"
+      }, {
+        "id" : "86",
+        "vertices" : [ {
+          "x" : 3202,
+          "y" : 3749
+        } ]
+      }, {
+        "id" : "89"
+      } ]
+    } ]
+  }
+}
