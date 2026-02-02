@@ -1,0 +1,6 @@
+apiVersion: v2
+name: workshop-greeter
+description: Simple Helm chart for the workshop greeter app
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

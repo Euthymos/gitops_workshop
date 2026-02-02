@@ -1,0 +1,12 @@
+{{- $attendeeName := .Values.attendeeName | trim -}}
+{{- if $attendeeName }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "workshop-greeter.fullname" . }}-config
+  labels:
+    {{- include "workshop-greeter.labels" . | nindent 4 }}
+data:
+  config.json: |
+    {"attendeeName":"{{ $attendeeName }}"}
+{{- end }}
