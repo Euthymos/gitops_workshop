@@ -2,19 +2,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "workshop-greeter.fullname" . }}
+  name: {{ include "osk-demo.fullname" . }}
   labels:
-    {{- include "workshop-greeter.labels" . | nindent 4 }}
+    {{- include "osk-demo.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "workshop-greeter.name" . }}
+      app.kubernetes.io/name: {{ include "osk-demo.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        {{- include "workshop-greeter.labels" . | nindent 8 }}
+        {{- include "osk-demo.labels" . | nindent 8 }}
     spec:
       containers:
         - name: app
@@ -34,5 +34,5 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: {{ include "workshop-greeter.fullname" . }}-config
+            name: {{ include "osk-demo.fullname" . }}-config
       {{- end }}

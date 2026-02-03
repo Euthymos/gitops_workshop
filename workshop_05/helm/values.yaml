@@ -1,5 +1,5 @@
 image:
-  repository: quay.io/euthymos/workshop-greeter
+  repository: ddsnexus01a.minv.sk:500X/repository/docker-devops/osk-demo:latest-ppc64le
   tag: "latest"
   pullPolicy: IfNotPresent
 

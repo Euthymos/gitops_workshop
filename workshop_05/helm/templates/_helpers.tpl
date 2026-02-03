@@ -1,8 +1,8 @@
-{{- define "workshop-greeter.name" -}}
+{{- define "osk-demo.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-{{- define "workshop-greeter.fullname" -}}
+{{- define "osk-demo.fullname" -}}
 {{- $name := default .Chart.Name .Values.nameOverride -}}
 {{- if .Values.fullnameOverride -}}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
@@ -11,8 +11,8 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "workshop-greeter.labels" -}}
-app.kubernetes.io/name: {{ include "workshop-greeter.name" . }}
+{{- define "osk-demo.labels" -}}
+app.kubernetes.io/name: {{ include "osk-demo.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/version: {{ .Chart.AppVersion }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}

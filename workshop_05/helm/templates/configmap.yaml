@@ -3,9 +3,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "workshop-greeter.fullname" . }}-config
+  name: {{ include "osk-demo.fullname" . }}-config
   labels:
-    {{- include "workshop-greeter.labels" . | nindent 4 }}
+    {{- include "osk-demo.labels" . | nindent 4 }}
 data:
   config.json: |
     {"attendeeName":"{{ $attendeeName }}"}

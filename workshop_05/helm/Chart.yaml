@@ -1,5 +1,5 @@
 apiVersion: v2
-name: workshop-greeter
+name: osk-demo
 description: Simple Helm chart for the workshop greeter app
 type: application
 version: 0.1.0
