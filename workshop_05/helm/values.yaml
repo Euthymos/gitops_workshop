@@ -1,5 +1,5 @@
 image:
-  repository: ddsnexus01a.minv.sk:500X/repository/docker-devops/osk-demo:latest-ppc64le
+  repository: ddsnexus01a.minv.sk:500X/repository/docker-devops/osk-demo
   tag: "latest"
   pullPolicy: IfNotPresent
 
