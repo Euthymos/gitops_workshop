@@ -22,3 +22,6 @@ verify:
 	kubectl get pods -A
 	kubectl -n argocd get pods
 	kubectl -n gitea get pods
+
+info:
+	@./scripts/50-print-access.sh
