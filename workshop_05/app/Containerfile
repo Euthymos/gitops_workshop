@@ -1,0 +1,15 @@
+FROM --platform=$BUILDPLATFORM registry.access.redhat.com/ubi9/nodejs-20 AS build
+WORKDIR /opt/app-root/src
+USER 0
+COPY package.json package-lock.json* ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+FROM registry.access.redhat.com/ubi9/nginx-126 AS runtime
+WORKDIR /opt/app-root/src
+USER 0
+COPY --from=build --chown=1001:0 --chmod=775 /opt/app-root/src/dist .
+USER 1001
+
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,0 +1,11 @@
+image:
+  repository: quay.io/euthymos/workshop-greeter
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+attendeeName: ""
