@@ -1,6 +1,6 @@
 **/.vscode
 **/node_modules
-workshop_04/lab/cicd/.env
+**/.env
 workshop_04/lab/cicd/repos/app_repo/dist
 workshop_04/lab/cicd/repos/app_repo/.eslintcache
 workshop_04/lab/todo-api/helm/Chart.lock

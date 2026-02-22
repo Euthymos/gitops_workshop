@@ -90,6 +90,7 @@ Tento workshop je zameraný na prácu s ArgoCD ako GitOps nástrojom. Ukážeme 
     ```bash
     ls templates/
     cat templates/deployment.yaml
+    cat templates/configmap.yaml
     cat templates/ingress.yaml
     ```
 

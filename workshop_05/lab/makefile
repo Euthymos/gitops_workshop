@@ -8,11 +8,10 @@ export
 up:
 	@./scripts/00-check.sh
 	@./scripts/10-minikube-up.sh
-	@./scripts/20-registry-enable.sh
-	@./scripts/30-argocd-install.sh
-	@./scripts/40-gitea-install.sh
-	@./scripts/50-argocd-configure.sh
-	@./scripts/60-print-access.sh
+	@./scripts/20-argocd-install.sh
+	@./scripts/30-gitea-install.sh
+	@./scripts/40-argocd-configure.sh
+	@./scripts/50-print-access.sh
 
 down:
 	minikube delete || true
