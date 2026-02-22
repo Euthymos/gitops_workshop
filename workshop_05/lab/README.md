@@ -2,7 +2,6 @@
 
 ## Čo to spraví
 - spustí minikube + ingress addon
-- zapne minikube registry addon
 - nainštaluje ArgoCD (kubectl apply z oficiálneho manifestu)
 - nainštaluje Gitea (Ingress host: gitea.local)
 - zaregistruje Gitea repo v ArgoCD a sprístupní ArgoCD cez Ingress (argocd.local)
@@ -44,7 +43,6 @@ workshop_05/lab/
   scripts/
     00-check.sh       – kontrola nástrojov
     10-minikube-up.sh – štart minikube + ingress addon
-    20-registry-enable.sh – minikube registry
     30-argocd-install.sh  – inštalácia ArgoCD
     40-gitea-install.sh   – inštalácia Gitea (Helm)
     50-argocd-configure.sh – registrácia repo + Ingress

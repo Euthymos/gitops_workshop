@@ -8,7 +8,6 @@ export
 up:
 	@./scripts/00-check.sh
 	@./scripts/10-minikube-up.sh
-	@./scripts/20-registry-enable.sh
 	@./scripts/30-argocd-install.sh
 	@./scripts/40-gitea-install.sh
 	@./scripts/50-argocd-configure.sh
