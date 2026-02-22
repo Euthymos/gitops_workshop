@@ -1,0 +1,179 @@
+# ── Task: git-clone-http ────────────────────────────────────────────────────
+# Klonuje Git repozitár cez HTTP s autentifikáciou tokenom z Secret.
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: git-clone-http
+  namespace: workshop-06-cicd
+spec:
+  params:
+    - name: repoFullName
+      type: string
+      description: "Napr. gitea-admin/app-repo"
+    - name: revision
+      type: string
+      default: main
+    - name: giteaBaseUrl
+      type: string
+      default: "http://gitea-http.gitea.svc.cluster.local:3000"
+    - name: targetDir
+      type: string
+      default: src
+      description: "Cieľový podadresár v workspace (napr. src alebo helmrepo)"
+  workspaces:
+    - name: source
+  steps:
+    - name: clone
+      image: alpine/git:2.45.2
+      env:
+        - name: GITEA_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: gitea-credentials
+              key: username
+        - name: GITEA_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: gitea-credentials
+              key: token
+      script: |
+        #!/bin/sh
+        set -e
+        cd $(workspaces.source.path)
+        rm -rf "$(params.targetDir)"
+        URL="$(params.giteaBaseUrl)/$(params.repoFullName).git"
+        AUTH_URL=$(echo "$URL" | sed "s#http://#http://${GITEA_USERNAME}:${GITEA_TOKEN}@#")
+        git clone "$AUTH_URL" "$(params.targetDir)"
+        cd "$(params.targetDir)"
+        git checkout "$(params.revision)"
+        echo "Checked out: $(git rev-parse HEAD)"
+
+---
+# ── Task: buildah-build-push ────────────────────────────────────────────────
+# Builduje kontajner pomocou buildah a pushuje ho do OpenShift interného registra.
+# Používa rootless build s VFS storage driverom (bezpečné bez privilegovaného SCC).
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: buildah-build-push
+  namespace: workshop-06-cicd
+spec:
+  params:
+    - name: image
+      type: string
+      description: "Plná cesta k image vrátane tagu, napr. image-registry.openshift-image-registry.svc:5000/workshop-06-cicd/greeter:abc123"
+    - name: containerfile
+      type: string
+      default: Containerfile
+      description: "Názov Containerfile/Dockerfile"
+    - name: context
+      type: string
+      default: "."
+      description: "Build context relatívne k workspaces.source.path/src"
+  workspaces:
+    - name: source
+  steps:
+    - name: build-and-push
+      image: quay.io/buildah/stable:latest
+      workingDir: $(workspaces.source.path)/src
+      securityContext:
+        runAsUser: 0
+      env:
+        - name: STORAGE_DRIVER
+          value: vfs
+      script: |
+        #!/bin/bash
+        set -e
+        echo "[buildah] Building image: $(params.image)"
+        buildah --storage-driver=vfs bud \
+          --no-cache \
+          -f "$(params.containerfile)" \
+          -t "$(params.image)" \
+          "$(params.context)"
+
+        echo "[buildah] Logging into OCP internal registry..."
+        # Použi token aktuálneho SA pre prihlásenie do registra
+        buildah --storage-driver=vfs login \
+          --tls-verify=false \
+          -u serviceaccount \
+          -p "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
+          image-registry.openshift-image-registry.svc:5000
+
+        echo "[buildah] Pushing image: $(params.image)"
+        buildah --storage-driver=vfs push \
+          --tls-verify=false \
+          "$(params.image)"
+
+        echo "[buildah] Done: $(params.image)"
+
+---
+# ── Task: update-infra-image-tag ────────────────────────────────────────────
+# Naklonuje gitops-infra repozitár, aktualizuje image.tag v Helm values súbore
+# a pushne zmenu späť do repozitára.
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: update-infra-image-tag
+  namespace: workshop-06-cicd
+spec:
+  params:
+    - name: infraRepoFullName
+      type: string
+      default: "gitea-admin/gitops-infra"
+    - name: giteaBaseUrl
+      type: string
+      default: "http://gitea-http.gitea.svc.cluster.local:3000"
+    - name: valuesFilePath
+      type: string
+      default: "greeter/values.yaml"
+      description: "Cesta k values.yaml v infra repo, napr. greeter/values.yaml"
+    - name: newTag
+      type: string
+      description: "Nový image tag (napr. git SHA)"
+  workspaces:
+    - name: source
+  steps:
+    - name: update-and-push
+      image: alpine:3.20
+      env:
+        - name: GITEA_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: gitea-credentials
+              key: username
+        - name: GITEA_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: gitea-credentials
+              key: token
+      script: |
+        #!/bin/sh
+        set -e
+
+        apk add --no-cache git yq
+
+        cd $(workspaces.source.path)
+        rm -rf infrarepo
+
+        URL="$(params.giteaBaseUrl)/$(params.infraRepoFullName).git"
+        AUTH_URL=$(echo "$URL" | sed "s#http://#http://${GITEA_USERNAME}:${GITEA_TOKEN}@#")
+        git clone "$AUTH_URL" infrarepo
+        cd infrarepo
+
+        git config user.name "tekton-pipeline"
+        git config user.email "tekton@workshop.local"
+
+        VALUES_FILE="$(params.valuesFilePath)"
+        NEW_TAG="$(params.newTag)"
+
+        echo "[update] Aktualizujem ${VALUES_FILE} → image.tag: ${NEW_TAG}"
+        yq e ".image.tag = \"${NEW_TAG}\"" -i "${VALUES_FILE}"
+
+        echo "[update] Commit a push..."
+        git add "${VALUES_FILE}"
+        git commit -m "ci: update greeter image tag to ${NEW_TAG} [skip ci]"
+
+        PUSH_URL=$(echo "$URL" | sed "s#http://#http://${GITEA_USERNAME}:${GITEA_TOKEN}@#")
+        git push "$PUSH_URL" main
+
+        echo "[update] Hotovo."

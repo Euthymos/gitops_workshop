@@ -1,9 +1,9 @@
 **/.vscode
 **/node_modules
 **/.env
-workshop_04/lab/cicd/repos/app_repo/dist
-workshop_04/lab/cicd/repos/app_repo/.eslintcache
-workshop_04/lab/todo-api/helm/Chart.lock
-workshop_04/lab/todo-api/helm/charts/
-workshop_04/lab/todo-api/src/package-lock.json
+apps/todos-spa/app/dist
+apps/todos-spa/app/.eslintcache
+apps/todos-api/helm/Chart.lock
+apps/todos-api/helm/charts/
+apps/todos-api/app/package-lock.json
 package-lock.json

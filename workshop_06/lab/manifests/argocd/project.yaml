@@ -1,0 +1,26 @@
+# ArgoCD AppProject pre workshop-06
+# Aplikuj: oc apply -f manifests/argocd/project.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: workshop-06
+  namespace: openshift-gitops
+spec:
+  description: "Workshop 06 – Greeter app CI/CD + GitOps"
+  # Zdroje (Git repozitáre), z ktorých smie ArgoCD nasadzovať
+  sourceRepos:
+    - "http://gitea-gitea.apps-crc.testing/gitea-admin/gitops-infra.git"
+    # Wildcard: umožní akýkoľvek Gitea repozitár (pre dev prostredie)
+    - "http://gitea-gitea.apps-crc.testing/*"
+  # Cieľové clustery a namespace-y
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: workshop-06
+  # Povolené cluster-scoped resources
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  # Povolené namespace-scoped resources
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"

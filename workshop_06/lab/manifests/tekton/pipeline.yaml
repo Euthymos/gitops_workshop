@@ -1,0 +1,81 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: greeter-ci
+  namespace: workshop-06-cicd
+spec:
+  params:
+    - name: appRepoFullName
+      type: string
+      description: "Napr. gitea-admin/app-repo"
+      default: "gitea-admin/app-repo"
+    - name: appRevision
+      type: string
+      default: main
+    - name: imageRepo
+      type: string
+      default: "image-registry.openshift-image-registry.svc:5000/workshop-06-cicd/greeter"
+      description: "Cesta k image bez tagu"
+    - name: imageTag
+      type: string
+      description: "Image tag – typicky git SHA commitu"
+    - name: infraRepoFullName
+      type: string
+      default: "gitea-admin/gitops-infra"
+    - name: infraValuesPath
+      type: string
+      default: "greeter/values.yaml"
+      description: "Cesta k values.yaml v infra repo"
+  workspaces:
+    - name: shared
+      description: "Zdieľaný workspace pre všetky tasky"
+
+  tasks:
+    # ── 1. Klonuj app-repo ───────────────────────────────────────────────────
+    - name: clone
+      taskRef:
+        name: git-clone-http
+      params:
+        - name: repoFullName
+          value: $(params.appRepoFullName)
+        - name: revision
+          value: $(params.appRevision)
+        - name: targetDir
+          value: src
+      workspaces:
+        - name: source
+          workspace: shared
+
+    # ── 2. Buildni image a pushni do OCP registra ────────────────────────────
+    - name: build-push
+      runAfter:
+        - clone
+      taskRef:
+        name: buildah-build-push
+      params:
+        - name: image
+          value: "$(params.imageRepo):$(params.imageTag)"
+        - name: containerfile
+          value: Containerfile
+        - name: context
+          value: "."
+      workspaces:
+        - name: source
+          workspace: shared
+
+    # ── 3. Aktualizuj image tag v gitops-infra repo ──────────────────────────
+    - name: update-infra
+      runAfter:
+        - build-push
+      taskRef:
+        name: update-infra-image-tag
+      params:
+        - name: infraRepoFullName
+          value: $(params.infraRepoFullName)
+        - name: valuesFilePath
+          value: $(params.infraValuesPath)
+        - name: newTag
+          value: $(params.imageTag)
+      workspaces:
+        - name: source
+          workspace: shared

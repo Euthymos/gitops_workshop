@@ -1,8 +1,9 @@
+# TriggerBinding – mapuje payload Gitea webhook na parametre TriggerTemplate
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
   name: gitea-push-binding
-  namespace: cicd
+  namespace: workshop-06-cicd
 spec:
   params:
     - name: repo_full_name
@@ -13,11 +14,12 @@ spec:
       value: $(body.after)
 
 ---
+# TriggerTemplate – šablóna pre PipelineRun spustený webhookom
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerTemplate
 metadata:
   name: gitea-push-template
-  namespace: cicd
+  namespace: workshop-06-cicd
 spec:
   params:
     - name: repo_full_name
@@ -27,36 +29,37 @@ spec:
     - apiVersion: tekton.dev/v1
       kind: PipelineRun
       metadata:
-        generateName: app-ci-
-        namespace: cicd
+        generateName: greeter-ci-
+        namespace: workshop-06-cicd
       spec:
-        serviceAccountName: pipeline-bot
+        serviceAccountName: pipeline
         pipelineRef:
-          name: app-ci-to-helm-update
+          name: greeter-ci
         params:
           - name: appRepoFullName
             value: $(tt.params.repo_full_name)
           - name: appRevision
             value: main
           - name: imageRepo
-            value: registry.kube-system.svc.cluster.local/todos-spa
+            value: image-registry.openshift-image-registry.svc:5000/workshop-06-cicd/greeter
           - name: imageTag
             value: $(tt.params.sha)
-          - name: helmRepoFullName
-            value: admin/helm-repo
-          - name: helmValuesPath
-            value: prod.yaml
+          - name: infraRepoFullName
+            value: gitea-admin/gitops-infra
+          - name: infraValuesPath
+            value: greeter/values.yaml
         workspaces:
           - name: shared
             persistentVolumeClaim:
               claimName: cicd-workspace
 
 ---
+# EventListener – naslúcha webhookom z Gitea, filtruje push na main branch
 apiVersion: triggers.tekton.dev/v1beta1
 kind: EventListener
 metadata:
-  name: gitea-listener
-  namespace: cicd
+  name: greeter-listener
+  namespace: workshop-06-cicd
 spec:
   serviceAccountName: el-sa
   triggers:
@@ -66,6 +69,7 @@ spec:
             name: cel
           params:
             - name: filter
+              # Spusti pipeline len pri pushe na main branch
               value: "body.ref == 'refs/heads/main'"
       bindings:
         - ref: gitea-push-binding

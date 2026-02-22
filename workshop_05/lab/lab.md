@@ -65,10 +65,10 @@ Tento workshop je zameraný na prácu s ArgoCD ako GitOps nástrojom. Ukážeme 
 
 ## Cvičenie 1 – Preskúmaj helm chart greeter aplikácie
 
-1. Vojdi do adresára `../helm`:
+1. Vojdi do adresára `../../apps/greeter/helm`:
 
     ```bash
-    cd ../helm
+    cd ../../apps/greeter/helm
     ```
 
 2. Prečítaj súbor `Chart.yaml`:
@@ -126,7 +126,7 @@ Tento workshop je zameraný na prácu s ArgoCD ako GitOps nástrojom. Ukážeme 
 1. Skopíruj obsah adresára `helm/` do repozitára:
 
     ```bash
-    cp -r <cesta_k_workshopu>/workshop_05/helm/. ./greeter/
+    cp -r <cesta_k_workshopu>/apps/greeter/helm/. ./greeter/
     ```
 
 2. Zobraz skopírované súbory:

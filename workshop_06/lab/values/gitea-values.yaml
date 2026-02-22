@@ -1,0 +1,57 @@
+# Gitea Helm chart values pre OpenShift (CRC)
+# Ref: https://gitea.com/gitea/helm-chart
+
+global:
+  imageRegistry: ""
+
+replicaCount: 1
+
+image:
+  repository: gitea/gitea
+  tag: "1.21"
+  pullPolicy: IfNotPresent
+
+service:
+  http:
+    type: ClusterIP
+    port: 3000
+  ssh:
+    type: ClusterIP
+    port: 22
+
+ingress:
+  enabled: false   # Namiesto ingress použijeme OCP Route (vytvorí skript)
+
+persistence:
+  enabled: true
+  size: 1Gi
+  storageClass: ""
+
+gitea:
+  config:
+    APP_NAME: "Gitea – Workshop 06"
+    server:
+      DOMAIN: "gitea-gitea.apps-crc.testing"
+      ROOT_URL: "http://gitea-gitea.apps-crc.testing/"
+      HTTP_PORT: 3000
+    repository:
+      DEFAULT_BRANCH: main
+    webhook:
+      ALLOWED_HOST_LIST: "*"
+      SKIP_TLS_VERIFY: true
+    security:
+      INSTALL_LOCK: true
+
+# Bežia ako non-root (OpenShift vyžaduje)
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+containerSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL

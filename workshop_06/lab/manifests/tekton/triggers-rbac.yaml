@@ -1,0 +1,42 @@
+# ServiceAccount pre EventListener
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: el-sa
+  namespace: workshop-06-cicd
+---
+# Rola umožňuje EventListeneru vytvárať PipelineRuns a čítať TriggerBindings/Templates
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: el-role
+  namespace: workshop-06-cicd
+rules:
+  - apiGroups: ["triggers.tekton.dev"]
+    resources:
+      - eventlisteners
+      - triggerbindings
+      - triggertemplates
+      - triggers
+      - clusterinterceptors
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["tekton.dev"]
+    resources: ["pipelineruns", "pipelineresources"]
+    verbs: ["create", "get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["configmaps", "secrets"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: el-role-binding
+  namespace: workshop-06-cicd
+subjects:
+  - kind: ServiceAccount
+    name: el-sa
+    namespace: workshop-06-cicd
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: el-role

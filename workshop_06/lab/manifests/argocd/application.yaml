@@ -1,0 +1,35 @@
+# ArgoCD Application pre greeter aplikáciu
+# Aplikuj: oc apply -f manifests/argocd/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: greeter
+  namespace: openshift-gitops
+  # Finalizér zabezpečí vymazanie resources pri mazaní Application
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: workshop-06
+
+  source:
+    repoURL: http://gitea-gitea.apps-crc.testing/gitea-admin/gitops-infra.git
+    targetRevision: main
+    path: greeter
+    # Helm špecifické nastavenia
+    helm:
+      valueFiles:
+        - values.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: workshop-06
+
+  # Manuálna synchronizácia – účastník musí kliknúť Sync v UI
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=false
+      - PrunePropagationPolicy=foreground
+    # Pre automatickú synchronizáciu odkomentuj:
+    # automated:
+    #   prune: true
+    #   selfHeal: true

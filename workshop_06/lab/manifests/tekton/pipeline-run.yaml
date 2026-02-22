@@ -1,0 +1,29 @@
+# Manuálny PipelineRun pre testovacie účely (bez webhookov).
+# Spusti: oc apply -f manifests/tekton/pipeline-run.yaml -n workshop-06-cicd
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: greeter-ci-manual-run
+  namespace: workshop-06-cicd
+spec:
+  serviceAccountName: pipeline
+  pipelineRef:
+    name: greeter-ci
+  params:
+    - name: appRepoFullName
+      value: "gitea-admin/app-repo"
+    - name: appRevision
+      value: main
+    - name: imageRepo
+      value: "image-registry.openshift-image-registry.svc:5000/workshop-06-cicd/greeter"
+    # Použi manual-run ako tag pre testovacie účely
+    - name: imageTag
+      value: "manual-run"
+    - name: infraRepoFullName
+      value: "gitea-admin/gitops-infra"
+    - name: infraValuesPath
+      value: "greeter/values.yaml"
+  workspaces:
+    - name: shared
+      persistentVolumeClaim:
+        claimName: cicd-workspace
