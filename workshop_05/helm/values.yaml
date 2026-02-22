@@ -9,3 +9,8 @@ service:
   targetPort: 8080
 
 attendeeName: ""
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  host: greeter.local
