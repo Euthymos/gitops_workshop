@@ -8,7 +8,11 @@ set -euo pipefail
 echo "[gitea] Vytváram namespace gitea..."
 oc create namespace gitea --dry-run=client -o yaml | oc apply -f -
 
-echo "[gitea] Pridávam Helm repozitár Gitea..."
+echo "[gitea] Udelujem anyuid SCC servisnému účtu Gitea..."
+# Gitea pod beží ako UID 1000 – na OCP je potrebný anyuid SCC.
+oc adm policy add-scc-to-user anyuid -z default -n gitea
+
+echo "[gitea] Pridávam Helm repozítár Gitea..."
 helm repo add gitea-charts https://dl.gitea.com/charts/ --force-update
 helm repo update
 

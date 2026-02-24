@@ -5,7 +5,7 @@ metadata:
   name: el-sa
   namespace: workshop-06-cicd
 ---
-# Rola umožňuje EventListeneru vytvárať PipelineRuns a čítať TriggerBindings/Templates
+# Namespace-scoped Role: EventListener čítanie triggerov + vytváranie PipelineRunov
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -18,14 +18,18 @@ rules:
       - triggerbindings
       - triggertemplates
       - triggers
-      - clusterinterceptors
+      - interceptors
     verbs: ["get", "list", "watch"]
   - apiGroups: ["tekton.dev"]
     resources: ["pipelineruns", "pipelineresources"]
     verbs: ["create", "get", "list", "watch"]
   - apiGroups: [""]
-    resources: ["configmaps", "secrets"]
+    resources: ["configmaps", "secrets", "serviceaccounts"]
     verbs: ["get", "list", "watch"]
+  # Leader election
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -40,3 +44,26 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: el-role
+---
+# ClusterRole pre cluster-scoped resources (ClusterInterceptors sú cluster-wide)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: el-sa-clusterrole-workshop-06
+rules:
+  - apiGroups: ["triggers.tekton.dev"]
+    resources: ["clusterinterceptors", "clustertriggerbindings"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: el-sa-clusterrole-binding-workshop-06
+subjects:
+  - kind: ServiceAccount
+    name: el-sa
+    namespace: workshop-06-cicd
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: el-sa-clusterrole-workshop-06

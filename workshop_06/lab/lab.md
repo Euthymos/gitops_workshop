@@ -149,9 +149,10 @@ oc login -u developer -p developer https://api.crc.testing:6443
 
 ### Krok 2 – Inicializuj `app-repo`
 
-1. Skopíruj zdrojový kód greeter aplikácie z workshop_05:
+1. Ulož cestu k `lab/` adresáru pre neskorší návrat a skopíruj zdrojový kód greeter aplikácie:
 
     ```bash
+    LAB_DIR="$(pwd)"   # workshop_06/lab
     cp -r ../../apps/greeter/app /tmp/greeter-app
     cd /tmp/greeter-app
     ```
@@ -171,26 +172,30 @@ oc login -u developer -p developer https://api.crc.testing:6443
 
 ### Krok 3 – Pushni helm chart do `gitops-infra`
 
-1. Klonuj prázdny `gitops-infra` repozitár:
+Pipeline očakáva, že helm chart sa nachádza v podadresári `greeter/` repozitára `gitops-infra` (cesta `greeter/values.yaml`). Klonuj `gitops-infra` a skopíruj helm chart do správneho podadresára.
+
+1. Klonuj `gitops-infra` a skopíruj helm chart:
 
     ```bash
-    cd /tmp
-    git clone http://gitea-gitea.apps-crc.testing/gitea-admin/gitops-infra.git
-    cd gitops-infra
+    cd "${LAB_DIR}"
+    git clone http://gitea-gitea.apps-crc.testing/gitea-admin/gitops-infra.git /tmp/gitops-infra
+    mkdir -p /tmp/gitops-infra/greeter
+    cp -r ../../apps/greeter/helm/. /tmp/gitops-infra/greeter/
+    cd /tmp/gitops-infra
     ```
 
-2. Skopíruj helm chart greeter aplikácie:
+2. Skontroluj skopírované súbory:
 
     ```bash
-    mkdir -p greeter
-    cp -r ../../apps/greeter/helm/. ./greeter/
-    ```
-
-3. Skontroluj skopírované súbory:
-
-    ```bash
-    tree greeter/
+    tree .
     cat greeter/values.yaml
+    ```
+
+3. Keďže nasadzuješ na OpenShift, uprav `greeter/values.yaml` a nastav:
+
+    ```yaml
+    exposure:
+        type: route
     ```
 
 4. Commitni a pushni:
@@ -219,13 +224,17 @@ oc project workshop-06-cicd
 1. Prezri si tasky definované v `manifests/tekton/tasks.yaml`:
 
     ```bash
+    cd "${LAB_DIR}"
     cat manifests/tekton/tasks.yaml
     ```
 
-    Všimni si tri tasky:
-    - `git-clone-http` – klonuje git repozitár cez HTTP s tokenom
-    - `buildah-build-push` – builduje kontajner a pushuje do OpenShift registra
-    - `update-infra-image-tag` – aktualizuje `image.tag` v `gitops-infra`
+    Vlastné tasky (definované v tomto projekte):
+    - `buildah-build-push` – builduje kontajner a pushuje do OpenShift interného registra
+    - `npm` – spúšťa ľubovoľný `npm` príkaz (install, run lint, run test) v `src/`
+
+    Tasky z `openshift-pipelines` (referencované cez cluster resolver):
+    - `git-clone` – klonuje git repozitár (použitý pre `app-repo` aj `gitops-infra`)
+    - `git-cli` – spúšťa git príkazy zo skriptu (commit + push aktualizácie image tagu)
 
 2. Prezri si pipeline definovanú v `manifests/tekton/pipeline.yaml`:
 
@@ -233,10 +242,13 @@ oc project workshop-06-cicd
     cat manifests/tekton/pipeline.yaml
     ```
 
-    Všimni si kroky:
-    1. `clone` – klonuj `app-repo`
-    2. `build-push` – build + push image do OCP registra
-    3. `update-helm` – aktualizuj tag v `gitops-infra`
+    Pipeline `greeter-ci` má 7 krokov:
+    1. `clone` – klonuje `app-repo` do `src/` (git-clone z openshift-pipelines)
+    2. `npm-install` – nainštaluje závislosti (`npm install`)
+    3. `npm-lint` + `npm-test` – bežia **paralelne** po `npm-install`
+    4. `build-push` – buildah build + push image do OCP registra (až po úspešnom lint aj test)
+    5. `clone-infra` – klonuje `gitops-infra` do `infrarepo/` (git-clone z openshift-pipelines)
+    6. `update-infra` – aktualizuje `image.tag` v `greeter/values.yaml` a pushuje (git-cli z openshift-pipelines)
 
 3. Prezri si trigger manifesty:
 
@@ -294,11 +306,10 @@ oc describe imagestream greeter -n workshop-06-cicd
 
 1. V Gitea UI otvor repozitár `gitops-infra` a skontroluj commit do `greeter/values.yaml`.
 
-2. Alebo cez git:
+2. Alebo cez git lokálne:
 
     ```bash
-    cd /tmp/gitops-infra
-    git pull
+    cd /tmp/gitops-infra && git pull
     cat greeter/values.yaml | grep tag
     ```
 
@@ -310,21 +321,14 @@ oc describe imagestream greeter -n workshop-06-cicd
 
 ### Krok 1 – Prihlás sa do ArgoCD UI
 
-1. Zisti URL ArgoCD:
+1. Zisti URL a prihlasovacie údaje ArgoCD:
 
     ```bash
-    make info
+    oc get route -n openshift-gitops openshift-gitops-server
+    oc extract secret -n openshift-gitops openshift-gitops-cluster
     ```
 
 2. Otvor ArgoCD vo webovom prehliadači.
-
-3. Prihlasovacie údaje:
-
-    ```bash
-    # heslo admin účtu ArgoCD
-    oc get secret openshift-gitops-cluster -n openshift-gitops -o jsonpath='{.data.admin\.password}' | base64 -d
-    echo
-    ```
 
 ### Krok 2 – Vytvor projekt v ArgoCD (cez UI)
 
@@ -361,7 +365,7 @@ oc describe imagestream greeter -n workshop-06-cicd
     - **Cluster URL:** `https://kubernetes.default.svc`
     - **Namespace:** `workshop-06`
 
-5. **Helm** – ponechaj predvolené hodnoty.
+5. **Helm** – nastav parameter `exposure.type=route` (alebo ponechaj predvolené, ak už máš `exposure.type: route` v `greeter/values.yaml`).
 
 6. Klikni **Create**.
 
@@ -442,11 +446,12 @@ oc apply -f manifests/argocd/application.yaml
     tkn pipelinerun logs -n workshop-06-cicd -f --last
     ```
 
+    Pipeline prejde cez všetky kroky: `clone` → `npm-install` → `npm-lint`/`npm-test` (paralelne) → `build-push` → `clone-infra` → `update-infra`.
+
 3. Po dokončení overte aktualizáciu v `gitops-infra`:
 
     ```bash
-    cd /tmp/gitops-infra
-    git pull
+    cd /tmp/gitops-infra && git pull
     cat greeter/values.yaml | grep tag
     ```
 
@@ -522,7 +527,7 @@ oc get route -n openshift-pipelines
     git push origin main
     ```
 
-2. Sleduj pipeline run:
+2. Sleduj pipeline run (všetky fázy vrátane paralelného lint/test):
 
     ```bash
     tkn pipelinerun logs -n workshop-06-cicd -f --last
@@ -538,7 +543,7 @@ oc get route -n openshift-pipelines
 
 ```bash
 cd /tmp/gitops-infra
-sed -i 's/tag: .*/tag: "nonexistent-tag"/' greeter/values.yaml
+sed -i 's/tag:.*/tag: "nonexistent-tag"/' greeter/values.yaml
 git add greeter/values.yaml
 git commit -m "test: simulate bad image tag"
 git push origin main
@@ -559,10 +564,10 @@ git push origin main
 ### Krok 3 – Oprav tag a obnov zdravý stav
 
 ```bash
-cd /tmp/gitops-infra
+cd /tmp/gitops-infra && git pull
 # použi aktuálny tag z imagestreamu
 NEW_TAG=$(oc get imagestream greeter -n workshop-06-cicd -o jsonpath='{.status.tags[0].tag}')
-sed -i "s/tag: .*/tag: \"${NEW_TAG}\"/" greeter/values.yaml
+sed -i "s/tag:.*/tag: ${NEW_TAG}/" greeter/values.yaml
 git add greeter/values.yaml
 git commit -m "fix: restore correct image tag"
 git push origin main

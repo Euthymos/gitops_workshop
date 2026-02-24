@@ -1,54 +1,3 @@
-# ── Task: git-clone-http ────────────────────────────────────────────────────
-# Klonuje Git repozitár cez HTTP s autentifikáciou tokenom z Secret.
-apiVersion: tekton.dev/v1
-kind: Task
-metadata:
-  name: git-clone-http
-  namespace: workshop-06-cicd
-spec:
-  params:
-    - name: repoFullName
-      type: string
-      description: "Napr. gitea-admin/app-repo"
-    - name: revision
-      type: string
-      default: main
-    - name: giteaBaseUrl
-      type: string
-      default: "http://gitea-http.gitea.svc.cluster.local:3000"
-    - name: targetDir
-      type: string
-      default: src
-      description: "Cieľový podadresár v workspace (napr. src alebo helmrepo)"
-  workspaces:
-    - name: source
-  steps:
-    - name: clone
-      image: alpine/git:2.45.2
-      env:
-        - name: GITEA_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: gitea-credentials
-              key: username
-        - name: GITEA_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: gitea-credentials
-              key: token
-      script: |
-        #!/bin/sh
-        set -e
-        cd $(workspaces.source.path)
-        rm -rf "$(params.targetDir)"
-        URL="$(params.giteaBaseUrl)/$(params.repoFullName).git"
-        AUTH_URL=$(echo "$URL" | sed "s#http://#http://${GITEA_USERNAME}:${GITEA_TOKEN}@#")
-        git clone "$AUTH_URL" "$(params.targetDir)"
-        cd "$(params.targetDir)"
-        git checkout "$(params.revision)"
-        echo "Checked out: $(git rev-parse HEAD)"
-
----
 # ── Task: buildah-build-push ────────────────────────────────────────────────
 # Builduje kontajner pomocou buildah a pushuje ho do OpenShift interného registra.
 # Používa rootless build s VFS storage driverom (bezpečné bez privilegovaného SCC).
@@ -107,73 +56,31 @@ spec:
         echo "[buildah] Done: $(params.image)"
 
 ---
-# ── Task: update-infra-image-tag ────────────────────────────────────────────
-# Naklonuje gitops-infra repozitár, aktualizuje image.tag v Helm values súbore
-# a pushne zmenu späť do repozitára.
+# ── Task: npm ───────────────────────────────────────────────────────────────
+# Spúšťa npm príkaz (install / run lint / run test) v zdrojovom adresári.
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
-  name: update-infra-image-tag
+  name: npm
   namespace: workshop-06-cicd
 spec:
   params:
-    - name: infraRepoFullName
+    - name: script
       type: string
-      default: "gitea-admin/gitops-infra"
-    - name: giteaBaseUrl
+      description: "npm príkaz bez prefixu 'npm', napr. install, run lint, run test"
+    - name: workingDir
       type: string
-      default: "http://gitea-http.gitea.svc.cluster.local:3000"
-    - name: valuesFilePath
-      type: string
-      default: "greeter/values.yaml"
-      description: "Cesta k values.yaml v infra repo, napr. greeter/values.yaml"
-    - name: newTag
-      type: string
-      description: "Nový image tag (napr. git SHA)"
+      default: src
+      description: "Podadresár v workspace kde sa nachádza package.json"
   workspaces:
     - name: source
   steps:
-    - name: update-and-push
-      image: alpine:3.20
-      env:
-        - name: GITEA_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: gitea-credentials
-              key: username
-        - name: GITEA_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: gitea-credentials
-              key: token
+    - name: npm
+      image: node:20-alpine
+      workingDir: $(workspaces.source.path)/$(params.workingDir)
       script: |
         #!/bin/sh
         set -e
-
-        apk add --no-cache git yq
-
-        cd $(workspaces.source.path)
-        rm -rf infrarepo
-
-        URL="$(params.giteaBaseUrl)/$(params.infraRepoFullName).git"
-        AUTH_URL=$(echo "$URL" | sed "s#http://#http://${GITEA_USERNAME}:${GITEA_TOKEN}@#")
-        git clone "$AUTH_URL" infrarepo
-        cd infrarepo
-
-        git config user.name "tekton-pipeline"
-        git config user.email "tekton@workshop.local"
-
-        VALUES_FILE="$(params.valuesFilePath)"
-        NEW_TAG="$(params.newTag)"
-
-        echo "[update] Aktualizujem ${VALUES_FILE} → image.tag: ${NEW_TAG}"
-        yq e ".image.tag = \"${NEW_TAG}\"" -i "${VALUES_FILE}"
-
-        echo "[update] Commit a push..."
-        git add "${VALUES_FILE}"
-        git commit -m "ci: update greeter image tag to ${NEW_TAG} [skip ci]"
-
-        PUSH_URL=$(echo "$URL" | sed "s#http://#http://${GITEA_USERNAME}:${GITEA_TOKEN}@#")
-        git push "$PUSH_URL" main
-
-        echo "[update] Hotovo."
+        echo "[npm] Spúšťam: npm $(params.script)"
+        npm $(params.script)
+        echo "[npm] Hotovo: npm $(params.script)"

@@ -1,0 +1,17 @@
+{{- if eq .Values.exposure.type "route" }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "greeter.fullname" . }}
+  labels:
+    {{- include "greeter.labels" . | nindent 4 }}
+spec:
+  host: {{ .Values.ingress.host }}
+  to:
+    kind: Service
+    name: {{ include "greeter.fullname" . }}
+    weight: 100
+  port:
+    targetPort: http
+  wildcardPolicy: None
+{{- end }}

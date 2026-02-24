@@ -52,6 +52,9 @@ spec:
           - name: shared
             persistentVolumeClaim:
               claimName: cicd-workspace
+          - name: basic-auth
+            secret:
+              secretName: gitea-credentials
 
 ---
 # EventListener – naslúcha webhookom z Gitea, filtruje push na main branch

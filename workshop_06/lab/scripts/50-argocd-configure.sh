@@ -14,19 +14,19 @@ ARGOCD_PASS="$(oc get secret openshift-gitops-cluster -n openshift-gitops \
 ARGOCD_SVC_HOST=$(oc get route openshift-gitops-server -n openshift-gitops \
   -o jsonpath='{.spec.host}')
 
-echo "[argocd] Prihlasovanie na ArgoCD API (http://${ARGOCD_SVC_HOST})..."
+echo "[argocd] Prihlasovanie na ArgoCD API (https://${ARGOCD_SVC_HOST})..."
 
-# Port-forward pre API prístup
-oc -n openshift-gitops port-forward svc/openshift-gitops-server 18080:80 &
+# Port-forward pre API prístup (ArgoCD na OCP používa HTTPS na porte 443)
+oc -n openshift-gitops port-forward svc/openshift-gitops-server 18443:443 &
 PF_PID=$!
 trap "kill ${PF_PID} 2>/dev/null || true; wait ${PF_PID} 2>/dev/null || true" EXIT
 
 for i in $(seq 1 15); do
-  curl -s http://localhost:18080/healthz >/dev/null 2>&1 && break
+  curl -sk https://localhost:18443/healthz >/dev/null 2>&1 && break
   sleep 2
 done
 
-SESSION_RESP=$(curl -s -X POST http://localhost:18080/api/v1/session \
+SESSION_RESP=$(curl -sk -X POST https://localhost:18443/api/v1/session \
   -H 'Content-Type: application/json' \
   -d "{\"username\":\"admin\",\"password\":\"${ARGOCD_PASS}\"}")
 
@@ -49,7 +49,7 @@ curl -s -o /dev/null -w "%{http_code}" -X POST "${GITEA_API}/user/repos" \
 
 # Registruj gitops-infra repo v ArgoCD
 echo "[argocd] Registrujem gitops-infra repozitár v ArgoCD..."
-curl -s -o /dev/null -X POST "http://localhost:18080/api/v1/repositories" \
+curl -sk -o /dev/null -X POST "https://localhost:18443/api/v1/repositories" \
   -H "Authorization: Bearer ${ARGOCD_TOKEN}" \
   -H 'Content-Type: application/json' \
   -d "{
@@ -60,7 +60,7 @@ curl -s -o /dev/null -X POST "http://localhost:18080/api/v1/repositories" \
   }" || true
 
 echo "[ok] ArgoCD nakonfigurovaný."
-echo "     URL: http://${ARGOCD_SVC_HOST}"
+echo "     URL: https://${ARGOCD_SVC_HOST}"
 echo "     Admin password: ${ARGOCD_PASS}"
 echo ""
 echo "     Ďalší krok: Použi ArgoCD UI alebo aplikuj:"

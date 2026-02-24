@@ -7,14 +7,14 @@
 **CI/CD pipeline** (Continuous Integration / Continuous Delivery):
 
 * Zodpovedá za builnovanie a testovanie aplikácie pri každom commite.
-* Výstupom je artefakt – typicky kontajnerový image s tagem (napr. git SHA).
+* Výstupom je artefakt – typicky kontajnerový image s tagom (napr. git SHA).
 * Klasické CI/CD systémy siahajú priamo na klaster a nasadzujú (`kubectl apply`, `helm upgrade`).
 
 **GitOps model**:
 
 * Klaster je vždy synchronizovaný s Git repozitárom.
-* Nikto nesahá na klaster priamo – zmena prechádza cez Git.
-* ArgoCD sleduje infra repozitár a deteguje odchýlky.
+* Nikto nesiaha na klaster priamo – zmena prechádza cez Git.
+* ArgoCD sleduje infra repozitár a detekuje odchýlky.
 
 **Kombinácia – ako to funguje spolu**:
 
@@ -161,7 +161,7 @@ Tento workshop explicitne oddeľuje kroky pre administrátora a vývojára.
 | Komponent | Inštalácia | Namespace |
 |---|---|---|
 | Gitea | Helm chart | `gitea` |
-| OpenShift Pipelines | Operator (OperatorHub) | `openshift-operators` |
+| OpenShift Pipelines | Operator (OperatorHub) | `openshift-pipelines` |
 | OpenShift GitOps (ArgoCD) | Operator (OperatorHub) | `openshift-gitops` |
 | CICD resources | `oc apply` | `workshop-06-cicd` |
 | Greeter app | ArgoCD sync | `workshop-06` |

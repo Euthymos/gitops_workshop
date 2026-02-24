@@ -6,11 +6,6 @@ global:
 
 replicaCount: 1
 
-image:
-  repository: gitea/gitea
-  tag: "1.21"
-  pullPolicy: IfNotPresent
-
 service:
   http:
     type: ClusterIP
@@ -42,16 +37,7 @@ gitea:
     security:
       INSTALL_LOCK: true
 
-# Bežia ako non-root (OpenShift vyžaduje)
-securityContext:
-  runAsNonRoot: true
-  runAsUser: 1000
-  fsGroup: 1000
-
-containerSecurityContext:
-  runAsNonRoot: true
-  runAsUser: 1000
-  allowPrivilegeEscalation: false
-  capabilities:
-    drop:
-      - ALL
+# Na OCP s anyuid SCC nechaj OpenShift priraďovať UID automaticky.
+# Gitea chart internálne vyžaduje UID 1000 – anyuid SCC to povoluje.
+securityContext: {}
+containerSecurityContext: {}

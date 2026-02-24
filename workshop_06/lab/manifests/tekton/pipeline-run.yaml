@@ -27,3 +27,6 @@ spec:
     - name: shared
       persistentVolumeClaim:
         claimName: cicd-workspace
+    - name: basic-auth
+      secret:
+        secretName: gitea-credentials

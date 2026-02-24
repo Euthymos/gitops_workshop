@@ -20,7 +20,8 @@ oc apply -f manifests/tekton/cicd-rbac.yaml -n "${OCP_CICD_NAMESPACE}"
 oc -n "${OCP_CICD_NAMESPACE}" delete secret gitea-credentials --ignore-not-found
 oc -n "${OCP_CICD_NAMESPACE}" create secret generic gitea-credentials \
   --from-literal=username="${GITEA_ADMIN_USER}" \
-  --from-literal=token="${GITEA_HTTP_TOKEN}"
+  --from-literal=token="${GITEA_HTTP_TOKEN}" \
+  --from-literal=password="${GITEA_HTTP_TOKEN}"  # alias pre git-clone basic-auth workspace
 
 # Tekton tasks, pipeline, triggers
 oc apply -f manifests/tekton/tasks.yaml -n "${OCP_CICD_NAMESPACE}"

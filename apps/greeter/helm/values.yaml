@@ -10,6 +10,9 @@ service:
 
 attendeeName: ""
 
+exposure:
+  type: ingress
+
 ingress:
   enabled: true
   ingressClassName: nginx
