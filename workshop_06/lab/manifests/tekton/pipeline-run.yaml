@@ -11,7 +11,7 @@ spec:
     name: greeter-ci
   params:
     - name: appRepoFullName
-      value: "gitea-admin/app-repo"
+      value: "euthymos/app-repo"
     - name: appRevision
       value: main
     - name: imageRepo
@@ -20,7 +20,7 @@ spec:
     - name: imageTag
       value: "manual-run"
     - name: infraRepoFullName
-      value: "gitea-admin/gitops-infra"
+      value: "euthymos/gitops-infra"
     - name: infraValuesPath
       value: "greeter/values.yaml"
   workspaces:
@@ -29,4 +29,4 @@ spec:
         claimName: cicd-workspace
     - name: basic-auth
       secret:
-        secretName: gitea-credentials
+        secretName: gitea-basic-auth

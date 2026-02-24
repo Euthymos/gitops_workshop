@@ -17,11 +17,29 @@ oc apply -f manifests/tekton/workspace-pvc.yaml -n "${OCP_CICD_NAMESPACE}"
 oc apply -f manifests/tekton/cicd-rbac.yaml -n "${OCP_CICD_NAMESPACE}"
 
 # Secret s Gitea credentials (pre git clone a helm update tasky)
+# git-clone a git-cli z openshift-pipelines očakávajú v basic-auth workspace
+# súbor .git-credentials vo formáte: http://user:password@host
+GITEA_INTERNAL_HOST="gitea-http.gitea.svc.cluster.local:3000"
+GIT_CREDENTIALS_FILE=$(mktemp)
+echo "http://${GITEA_ADMIN_USER}:${GITEA_HTTP_TOKEN}@${GITEA_INTERNAL_HOST}" > "${GIT_CREDENTIALS_FILE}"
+GIT_CONFIG_FILE=$(mktemp)
+cat <<EOF > "${GIT_CONFIG_FILE}"
+[user]
+   name = ${GITEA_ADMIN_USER}
+   email = ${GITEA_ADMIN_USER}@example.com
+EOF
+
 oc -n "${OCP_CICD_NAMESPACE}" delete secret gitea-credentials --ignore-not-found
 oc -n "${OCP_CICD_NAMESPACE}" create secret generic gitea-credentials \
   --from-literal=username="${GITEA_ADMIN_USER}" \
   --from-literal=token="${GITEA_HTTP_TOKEN}" \
   --from-literal=password="${GITEA_HTTP_TOKEN}"  # alias pre git-clone basic-auth workspace
+
+oc -n workshop-06-cicd delete secret gitea-basic-auth --ignore-not-found
+oc -n workshop-06-cicd create secret generic gitea-basic-auth \
+  --from-file=.git-credentials="${GIT_CREDENTIALS_FILE}" \
+  --from-file=.gitconfig="${GIT_CONFIG_FILE}"  # git-clone basic-auth workspace očakáva .git-credentials a .gitconfig súbory
+rm -f "${GIT_CREDENTIALS_FILE}" "${GIT_CONFIG_FILE}"
 
 # Tekton tasks, pipeline, triggers
 oc apply -f manifests/tekton/tasks.yaml -n "${OCP_CICD_NAMESPACE}"
