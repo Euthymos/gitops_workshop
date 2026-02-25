@@ -325,7 +325,7 @@ oc describe imagestream greeter -n workshop-06-cicd
 
     ```bash
     oc get route -n openshift-gitops openshift-gitops-server
-    oc extract secret -n openshift-gitops openshift-gitops-cluster
+    oc extract secret -n openshift-gitops openshift-gitops-cluster --to=-
     ```
 
 2. Otvor ArgoCD vo webovom prehliadači.
@@ -476,34 +476,7 @@ oc apply -f manifests/argocd/application.yaml
 
 ---
 
-## Cvičenie 7 – Preskúmaj Tekton Dashboard
-
-### Krok 1 – Nainštaluj Tekton Dashboard (voliteľné, ak nie je súčasťou operátora)
-
-OpenShift Pipelines operátor inštaluje dashboard automaticky. Skontroluj:
-
-```bash
-oc get route -n openshift-pipelines
-```
-
-### Krok 2 – Otvor Tekton Dashboard
-
-1. Zisti URL dashboardu:
-
-    ```bash
-    oc get route tekton-dashboard -n openshift-pipelines -o jsonpath='{.spec.host}'
-    ```
-
-2. Otvor URL vo webovom prehliadači.
-
-3. Preskúmaj:
-    - Zoznam `PipelineRuns` v namespace `workshop-06-cicd`
-    - Detail posledného `PipelineRun` – logy jednotlivých taskov
-    - `EventListeners` a `TriggerBindings`
-
----
-
-## Cvičenie 8 – Nastav automatickú synchronizáciu v ArgoCD (bonus)
+## Cvičenie 7 – Nastav automatickú synchronizáciu v ArgoCD (bonus)
 
 ### Krok 1 – Zapni Auto-Sync
 
@@ -521,7 +494,7 @@ oc get route -n openshift-pipelines
 
     ```bash
     cd /tmp/greeter-app
-    echo "<!-- auto sync test $(date) -->" >> index.html
+    echo '<!-- auto sync test $(date) -->' >> index.html
     git add .
     git commit -m "test: auto-sync pipeline → argocd"
     git push origin main
@@ -537,7 +510,7 @@ oc get route -n openshift-pipelines
 
 ---
 
-## Cvičenie 9 – Simulácia chybného image tagu (bonus)
+## Cvičenie 8 – Simulácia chybného image tagu (bonus)
 
 ### Krok 1 – Nastav neexistujúci tag v `gitops-infra`
 

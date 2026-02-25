@@ -11,40 +11,36 @@ oc create namespace "${OCP_CICD_NAMESPACE}" --dry-run=client -o yaml | oc apply 
 oc create namespace "${OCP_APP_NAMESPACE}" --dry-run=client -o yaml | oc apply -f -
 
 echo "[namespaces] Nastavujem RBAC pre developer..."
-
-# Developer může editovať zdroje v oboch namespacoch
-oc adm policy add-role-to-user edit developer \
-  -n "${OCP_CICD_NAMESPACE}" || true
-oc adm policy add-role-to-user edit developer \
-  -n "${OCP_APP_NAMESPACE}" || true
-
-# Developer (a pipeline SA) môže pushovať image do OCP registra
-oc adm policy add-role-to-user system:image-builder developer \
-  -n "${OCP_CICD_NAMESPACE}" || true
-
-# Umožní ArgoCD nasadzovať do app namespace
+oc adm policy add-role-to-user edit developer -n "${OCP_CICD_NAMESPACE}" || true
+oc adm policy add-role-to-user edit developer -n "${OCP_APP_NAMESPACE}" || true
+oc adm policy add-role-to-user system:image-builder developer -n "${OCP_CICD_NAMESPACE}" || true
+oc adm policy add-role-to-user system:image-puller system:serviceaccount:workshop-06:default -n "${OCP_CICD_NAMESPACE}" || true
 oc label namespace "${OCP_APP_NAMESPACE}" \
   argocd.argoproj.io/managed-by=openshift-gitops --overwrite
 
-echo "[namespaces] Povolím interný OCP register (ak nie je povolený)..."
+echo "[namespaces] Povolenie interného OCP registra..."
 oc patch configs.imageregistry.operator.openshift.io/cluster \
   --patch '{"spec":{"managementState":"Managed","storage":{"emptyDir":{}}}}' \
   --type=merge || true
 
-# ServiceAccount pipeline v CICD namespace musí mať právo pushnutia do registra
-# (pipeline SA je vytvorený automaticky OCP Pipelines operátorom)
-# Čakáme kým SA existuje
+# pipeline SA je vytváraný automaticky OCP Pipelines operátorom – počkaj naň
 echo "[namespaces] Čakám na pipeline ServiceAccount..."
 for i in $(seq 1 20); do
-  if oc get sa pipeline -n "${OCP_CICD_NAMESPACE}" >/dev/null 2>&1; then
-    echo "  [ok] pipeline SA existuje"
-    break
-  fi
+  oc get sa pipeline -n "${OCP_CICD_NAMESPACE}" >/dev/null 2>&1 && break
+  echo "  [wait] pipeline SA ($i/20)..."
   sleep 5
 done
 
+if ! oc get sa pipeline -n "${OCP_CICD_NAMESPACE}" >/dev/null 2>&1; then
+  echo "[namespaces] pipeline SA neexistuje, vytváram ho explicitne..."
+  oc create sa pipeline -n "${OCP_CICD_NAMESPACE}" >/dev/null
+fi
+
+# pipeline SA potrebuje: push do registra + privileged SCC pre buildah
 oc adm policy add-role-to-user system:image-builder \
   -z pipeline -n "${OCP_CICD_NAMESPACE}" || true
+oc adm policy add-scc-to-user privileged \
+  -z pipeline -n "${OCP_CICD_NAMESPACE}"
 
 echo "[ok] Namespaces a RBAC nastavené."
 echo "     CICD: ${OCP_CICD_NAMESPACE}"

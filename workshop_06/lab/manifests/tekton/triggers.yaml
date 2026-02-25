@@ -54,7 +54,7 @@ spec:
               claimName: cicd-workspace
           - name: basic-auth
             secret:
-              secretName: gitea-credentials
+              secretName: gitea-basic-auth
 
 ---
 # EventListener – naslúcha webhookom z Gitea, filtruje push na main branch

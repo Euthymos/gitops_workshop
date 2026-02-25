@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "greeter.labels" . | nindent 4 }}
 spec:
-  host: {{ .Values.ingress.host }}
+  host: {{ .Values.route.host }}
   to:
     kind: Service
     name: {{ include "greeter.fullname" . }}

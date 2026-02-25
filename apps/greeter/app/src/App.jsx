@@ -21,7 +21,7 @@ export default function App() {
           setName(configuredName);
           setSource('config.json');
         }
-      } catch (error) {
+      } catch {
         // Fall back to the default name when config is unavailable.
       }
     };

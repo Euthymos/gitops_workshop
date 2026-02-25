@@ -27,6 +27,8 @@ cat <<EOF > "${GIT_CONFIG_FILE}"
 [user]
    name = ${GITEA_ADMIN_USER}
    email = ${GITEA_ADMIN_USER}@example.com
+[credential]
+    helper = store
 EOF
 
 oc -n "${OCP_CICD_NAMESPACE}" delete secret gitea-credentials --ignore-not-found

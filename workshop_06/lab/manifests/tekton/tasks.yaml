@@ -1,6 +1,7 @@
 # ── Task: buildah-build-push ────────────────────────────────────────────────
 # Builduje kontajner pomocou buildah a pushuje ho do OpenShift interného registra.
-# Používa rootless build s VFS storage driverom (bezpečné bez privilegovaného SCC).
+# Musí bežať s privileged securityContext, inak buildah nemôže maskovať /proc
+# vo vnútri chroot-u (SCC admission vyberie privileged SCC len keď si ho pod vyžiada).
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
@@ -8,53 +9,62 @@ metadata:
   namespace: workshop-06-cicd
 spec:
   params:
-    - name: image
+    - name: IMAGE
       type: string
-      description: "Plná cesta k image vrátane tagu, napr. image-registry.openshift-image-registry.svc:5000/workshop-06-cicd/greeter:abc123"
-    - name: containerfile
+      description: "Plná cesta k image vrátane tagu"
+    - name: DOCKERFILE
       type: string
       default: Containerfile
-      description: "Názov Containerfile/Dockerfile"
-    - name: context
+    - name: CONTEXT
       type: string
       default: "."
-      description: "Build context relatívne k workspaces.source.path/src"
+      description: "Build context relatívne k workspace"
+    - name: STORAGE_DRIVER
+      type: string
+      default: vfs
+    - name: TLS_VERIFY
+      type: string
+      default: "false"
+  results:
+    - name: IMAGE_URL
+      description: "Fully qualified image name"
+    - name: IMAGE_DIGEST
+      description: "Digest of the image"
   workspaces:
     - name: source
   steps:
     - name: build-and-push
-      image: quay.io/buildah/stable:latest
-      workingDir: $(workspaces.source.path)/src
+      image: registry.redhat.io/rhel9/buildah@sha256:4e604d18fc609d25b2fc99814281944acaac78e8cd5e47b8359709b8b505db86
+      workingDir: $(workspaces.source.path)
       securityContext:
-        runAsUser: 0
-      env:
-        - name: STORAGE_DRIVER
-          value: vfs
+        privileged: true
       script: |
-        #!/bin/bash
-        set -e
-        echo "[buildah] Building image: $(params.image)"
-        buildah --storage-driver=vfs bud \
-          --no-cache \
-          -f "$(params.containerfile)" \
-          -t "$(params.image)" \
-          "$(params.context)"
+        #!/usr/bin/env bash
+        set -euo pipefail
 
-        echo "[buildah] Logging into OCP internal registry..."
-        # Použi token aktuálneho SA pre prihlásenie do registra
-        buildah --storage-driver=vfs login \
-          --tls-verify=false \
-          -u serviceaccount \
-          -p "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
-          image-registry.openshift-image-registry.svc:5000
+        CONTEXT="$(params.CONTEXT)"
+        DOCKERFILE="${CONTEXT}/$(params.DOCKERFILE)"
+        IMAGE="$(params.IMAGE)"
+        STORAGE_DRIVER="$(params.STORAGE_DRIVER)"
+        TLS_VERIFY="$(params.TLS_VERIFY)"
 
-        echo "[buildah] Pushing image: $(params.image)"
-        buildah --storage-driver=vfs push \
-          --tls-verify=false \
-          "$(params.image)"
+        echo "[buildah] Building ${IMAGE} from ${DOCKERFILE} (context=${CONTEXT})"
+        buildah --storage-driver="${STORAGE_DRIVER}" bud \
+          --tls-verify="${TLS_VERIFY}" \
+          -f "${DOCKERFILE}" \
+          -t "${IMAGE}" \
+          "${CONTEXT}"
 
-        echo "[buildah] Done: $(params.image)"
+        echo "[buildah] Pushing ${IMAGE}"
+        buildah --storage-driver="${STORAGE_DRIVER}" push \
+          --tls-verify="${TLS_VERIFY}" \
+          --digestfile=/tmp/digest.txt \
+          "${IMAGE}" \
+          "docker://${IMAGE}"
 
+        echo -n "${IMAGE}" | tee "$(results.IMAGE_URL.path)"
+        echo -n "$(cat /tmp/digest.txt)" | tee "$(results.IMAGE_DIGEST.path)"
+        echo "[buildah] Done"
 ---
 # ── Task: npm ───────────────────────────────────────────────────────────────
 # Spúšťa npm príkaz (install / run lint / run test) v zdrojovom adresári.

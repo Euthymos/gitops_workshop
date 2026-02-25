@@ -103,7 +103,7 @@ spec:
         - name: source
           workspace: shared
 
-    # ── 5. Buildni image a pushni do OCP registra ────────────────────────────
+    # ── 5. Buildni image a pushni do OCP registra (lokálny buildah-build-push) ──
     - name: build-push
       runAfter:
         - npm-lint
@@ -111,12 +111,16 @@ spec:
       taskRef:
         name: buildah-build-push
       params:
-        - name: image
+        - name: IMAGE
           value: "$(params.imageRepo):$(params.imageTag)"
-        - name: containerfile
+        - name: DOCKERFILE
           value: Containerfile
-        - name: context
-          value: "."
+        - name: CONTEXT
+          value: src
+        - name: STORAGE_DRIVER
+          value: vfs
+        - name: TLS_VERIFY
+          value: "false"
       workspaces:
         - name: source
           workspace: shared
@@ -139,8 +143,6 @@ spec:
           value: "$(params.giteaBaseUrl)/$(params.infraRepoFullName).git"
         - name: REVISION
           value: main
-        - name: SUBDIRECTORY
-          value: infrarepo
         - name: SSL_VERIFY
           value: "false"
         - name: DELETE_EXISTING
@@ -166,14 +168,15 @@ spec:
             value: openshift-pipelines
       params:
         - name: GIT_USER_NAME
-          value: tekton-pipeline
+          value: gitea-admin
         - name: GIT_USER_EMAIL
-          value: tekton@workshop.local
+          value: gitea-admin@example.com
         - name: SUBDIRECTORY
           value: infrarepo
         - name: GIT_SCRIPT
           value: |
             sed -i "s|tag:.*|tag: $(params.imageTag)|" $(params.infraValuesPath)
+            git checkout -B main
             git add $(params.infraValuesPath)
             git commit -m "ci: update greeter image tag to $(params.imageTag) [skip ci]"
             git push origin main

@@ -17,3 +17,6 @@ ingress:
   enabled: true
   ingressClassName: nginx
   host: greeter.local
+
+route:
+  host: greeter.apps-greeter.apps.cluster-12345678.example.com

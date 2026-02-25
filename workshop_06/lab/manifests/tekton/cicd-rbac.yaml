@@ -1,4 +1,11 @@
-# ServiceAccount pre pipeline runy (ak pipeline SA neexistuje – OCP Pipelines ho vytvorí automaticky)
+# ServiceAccount pre pipeline runy.
+# Vytvárame ho explicitne, aby bolo možné spoľahlivo priradiť SCC/role aj pred prvým PipelineRun.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pipeline
+  namespace: workshop-06-cicd
+---
 # Táto RBAC dáva pipeline SA právo spúšťať PipelineRuns a pristupovať k Secrets.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role

@@ -11,7 +11,7 @@ spec:
     name: greeter-ci
   params:
     - name: appRepoFullName
-      value: "euthymos/app-repo"
+      value: "gitea-admin/app-repo"
     - name: appRevision
       value: main
     - name: imageRepo
@@ -20,7 +20,7 @@ spec:
     - name: imageTag
       value: "manual-run"
     - name: infraRepoFullName
-      value: "euthymos/gitops-infra"
+      value: "gitea-admin/gitops-infra"
     - name: infraValuesPath
       value: "greeter/values.yaml"
   workspaces:
