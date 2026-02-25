@@ -191,9 +191,12 @@ Pipeline očakáva, že helm chart sa nachádza v podadresári `greeter/` repozi
     cat greeter/values.yaml
     ```
 
-3. Keďže nasadzuješ na OpenShift, uprav `greeter/values.yaml` a nastav:
+3. Keďže nasadzuješ na OpenShift z interného registra, uprav `greeter/values.yaml` a nastav:
 
     ```yaml
+    image:
+      repository: image-registry.openshift-image-registry.svc:5000/workshop-06-cicd/greeter
+    
     exposure:
         type: route
     ```
@@ -384,12 +387,14 @@ oc describe imagestream greeter -n workshop-06-cicd
 
 ### Krok 5 – Alternatíva: aplikuj ArgoCD manifest priamo
 
-Namiesto UI môžeš aplikovať manifesty:
+Namiesto UI môžeš aplikovať manifesty.
 
 ```bash
 oc apply -f manifests/argocd/project.yaml
 oc apply -f manifests/argocd/application.yaml
 ```
+
+**Poznámka:** Pre aplikovanie manifestov musíš byť prihlásený ako admin, pretože ArgoCD API server vyžaduje autentifikáciu. Ak chceš použiť `developer` účet, musíš mu udeliť potrebné RBAC práva pre prístup k ArgoCD API.
 
 ---
 
@@ -433,7 +438,7 @@ oc apply -f manifests/argocd/application.yaml
 
     ```bash
     cd /tmp/greeter-app
-    echo "<!-- updated $(date) -->" >> index.html
+    echo '<!-- updated '$(date)' -->' >> index.html
     git add .
     git commit -m "feat: trigger pipeline via webhook"
     git push origin main
