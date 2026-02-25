@@ -1,0 +1,43 @@
+# Gitea Helm chart values pre OpenShift (CRC)
+# Ref: https://gitea.com/gitea/helm-chart
+
+global:
+  imageRegistry: ""
+
+replicaCount: 1
+
+service:
+  http:
+    type: ClusterIP
+    port: 3000
+  ssh:
+    type: ClusterIP
+    port: 22
+
+ingress:
+  enabled: false   # Namiesto ingress použijeme OCP Route (vytvorí skript)
+
+persistence:
+  enabled: true
+  size: 1Gi
+  storageClass: ""
+
+gitea:
+  config:
+    APP_NAME: "Gitea – Workshop 06"
+    server:
+      DOMAIN: "gitea-gitea.apps-crc.testing"
+      ROOT_URL: "http://gitea-gitea.apps-crc.testing/"
+      HTTP_PORT: 3000
+    repository:
+      DEFAULT_BRANCH: main
+    webhook:
+      ALLOWED_HOST_LIST: "*"
+      SKIP_TLS_VERIFY: true
+    security:
+      INSTALL_LOCK: true
+
+# Na OCP s anyuid SCC nechaj OpenShift priraďovať UID automaticky.
+# Gitea chart internálne vyžaduje UID 1000 – anyuid SCC to povoluje.
+securityContext: {}
+containerSecurityContext: {}

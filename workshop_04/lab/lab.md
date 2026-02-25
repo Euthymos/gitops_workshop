@@ -14,7 +14,15 @@ V druhej časti workshopu budeme pracovať s Tekton pipelines ako našim CI nás
 
 ## Cvičenie 0 – Príprava klastra a namespace `workshop-04`
 
-1. Spusti minikube klaster:
+1. Prejdi do adresára `workshop_04/lab/` a ulož cestu pre neskorší návrat:
+
+   ```bash
+   cd workshop_04/lab
+   LAB_DIR="$(pwd)"
+   sudo chmod 774 ./scripts/*.sh
+   ```
+
+2. Spusti minikube klaster:
 
    ```bash
    minikube start
@@ -50,12 +58,12 @@ V druhej časti workshopu budeme pracovať s Tekton pipelines ako našim CI nás
 
 ## Cvičenie 1 – Zoznámenie sa s helm chartom, dependecies
 
-### Krok 1 – Preskúmaj obsah adresára `./todo-api/helm`
+### Krok 1 – Preskúmaj obsah adresára `apps/todos-api/helm`
 
-1. Vojdi do adresára `./todo-api/helm`:
+1. Vojdi do adresára `apps/todos-api/helm`:
 
     ```bash
-    cd ./todo-api/helm
+    cd "${LAB_DIR}/../../apps/todos-api/helm"
     ```
 
 2. Prečítaj súbor `Chart.yaml` a všimni si sekciu `dependencies:`:
@@ -238,12 +246,12 @@ V druhej časti workshopu budeme pracovať s Tekton pipelines ako našim CI nás
 
 ## Cvičenie 4 – Priprav klaster na prácu s tekton pipelines a git webhooks
 
-### Krok 1 - Spusti `make up` z adresára `cicd/`
+### Krok 1 - Spusti `make up` z adresára `workshop_04/lab/`
 
-1. Prejdi do adresára `cicd\` a otvor súbor `makefile`:
+1. Prejdi do adresára `workshop_04/lab/` a otvor súbor `makefile`:
 
     ```bash
-    cd ../../cicd
+    cd "${LAB_DIR}"
     sudo chmod 774 ./scripts/*.sh
     cat makefile
     ```
@@ -288,10 +296,11 @@ V druhej časti workshopu budeme pracovať s Tekton pipelines ako našim CI nás
 
 ### Krok 3 - Pushni obsah adresárov do vzdialených repozitárov
 
-1. Inicializuj git repozitár v adresári `app-repo/`, sprav počiatočný commit a pushni ho do vzdialeného repozitára:
+1. Skopíruj zdrojový kód `todos-spa` a inicializuj `app-repo`:
 
     ```bash
-    cd app-repo/
+    cp -r "${LAB_DIR}/../../apps/todos-spa/app" /tmp/app-repo
+    cd /tmp/app-repo
     git config --global user.name "admin"
     git config --global user.email "admin@example.com"
     git init
@@ -302,10 +311,11 @@ V druhej časti workshopu budeme pracovať s Tekton pipelines ako našim CI nás
     git push -u origin main
     ```
 
-2. Inicializuj git repozitár v adresári `helm-repo/`, sprav počiatočný commit a pushni ho do vzdialeného repozitára:
+2. Skopíruj helm chart a inicializuj `helm-repo`:
 
     ```bash
-    cd ../helm-repo/
+    cp -r "${LAB_DIR}/../../apps/todos-spa/helm" /tmp/helm-repo
+    cd /tmp/helm-repo
     git init
     git checkout -b main
     git add .
@@ -318,16 +328,17 @@ V druhej časti workshopu budeme pracovať s Tekton pipelines ako našim CI nás
 
 ### Krok 1 - Spusti tekton pipeline
 
-1. Obozám sa s parametrami a workspaces definovanými v pipeline `app-ci-to-helm-update`:
+1. Vráť sa do adresára `workshop_04/lab/` a oboznám sa s parametrami pipeline:
 
-    ```
+    ```bash
+    cd "${LAB_DIR}"
     tkn pipeline describe -n cicd app-ci-to-helm
     ```
 
 2. Aplikuj deklaráciu pipeline-run.yaml"
 
     ```bash
-    kubectl apply -f ../../manifests/tekton/pipeline-run.yaml
+    kubectl apply -f manifests/tekton/pipeline-run.yaml
     ```
 
 3. Všimni si, s akými parametrami bola pipeline spustená:
@@ -352,9 +363,10 @@ V druhej časti workshopu budeme pracovať s Tekton pipelines ako našim CI nás
 
 ### Krok 1 - Stiahni zmeny v repozitári `helm-repo`
 
-1. Aktualizuj obsah adresára `helm_repo`:
+1. Aktualizuj obsah lokálnej kópie `helm-repo`:
 
-    ```
+    ```bash
+    cd /tmp/helm-repo
     git pull
     ```
 
@@ -362,7 +374,7 @@ V druhej časti workshopu budeme pracovať s Tekton pipelines ako našim CI nás
 
 1. Použi príkaz `helm install` a súbor s hodnotami `dev.yaml`:
 
-    ```
+    ```bash
     helm install -n workshop-04-dev todos-spa-dev . --values dev.yaml
     ```
 

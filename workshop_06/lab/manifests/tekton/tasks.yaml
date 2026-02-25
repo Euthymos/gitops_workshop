@@ -1,0 +1,96 @@
+# ── Task: buildah-build-push ────────────────────────────────────────────────
+# Builduje kontajner pomocou buildah a pushuje ho do OpenShift interného registra.
+# Musí bežať s privileged securityContext, inak buildah nemôže maskovať /proc
+# vo vnútri chroot-u (SCC admission vyberie privileged SCC len keď si ho pod vyžiada).
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: buildah-build-push
+  namespace: workshop-06-cicd
+spec:
+  params:
+    - name: IMAGE
+      type: string
+      description: "Plná cesta k image vrátane tagu"
+    - name: DOCKERFILE
+      type: string
+      default: Containerfile
+    - name: CONTEXT
+      type: string
+      default: "."
+      description: "Build context relatívne k workspace"
+    - name: STORAGE_DRIVER
+      type: string
+      default: vfs
+    - name: TLS_VERIFY
+      type: string
+      default: "false"
+  results:
+    - name: IMAGE_URL
+      description: "Fully qualified image name"
+    - name: IMAGE_DIGEST
+      description: "Digest of the image"
+  workspaces:
+    - name: source
+  steps:
+    - name: build-and-push
+      image: registry.redhat.io/rhel9/buildah@sha256:4e604d18fc609d25b2fc99814281944acaac78e8cd5e47b8359709b8b505db86
+      workingDir: $(workspaces.source.path)
+      securityContext:
+        privileged: true
+      script: |
+        #!/usr/bin/env bash
+        set -euo pipefail
+
+        CONTEXT="$(params.CONTEXT)"
+        DOCKERFILE="${CONTEXT}/$(params.DOCKERFILE)"
+        IMAGE="$(params.IMAGE)"
+        STORAGE_DRIVER="$(params.STORAGE_DRIVER)"
+        TLS_VERIFY="$(params.TLS_VERIFY)"
+
+        echo "[buildah] Building ${IMAGE} from ${DOCKERFILE} (context=${CONTEXT})"
+        buildah --storage-driver="${STORAGE_DRIVER}" bud \
+          --tls-verify="${TLS_VERIFY}" \
+          -f "${DOCKERFILE}" \
+          -t "${IMAGE}" \
+          "${CONTEXT}"
+
+        echo "[buildah] Pushing ${IMAGE}"
+        buildah --storage-driver="${STORAGE_DRIVER}" push \
+          --tls-verify="${TLS_VERIFY}" \
+          --digestfile=/tmp/digest.txt \
+          "${IMAGE}" \
+          "docker://${IMAGE}"
+
+        echo -n "${IMAGE}" | tee "$(results.IMAGE_URL.path)"
+        echo -n "$(cat /tmp/digest.txt)" | tee "$(results.IMAGE_DIGEST.path)"
+        echo "[buildah] Done"
+---
+# ── Task: npm ───────────────────────────────────────────────────────────────
+# Spúšťa npm príkaz (install / run lint / run test) v zdrojovom adresári.
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: npm
+  namespace: workshop-06-cicd
+spec:
+  params:
+    - name: script
+      type: string
+      description: "npm príkaz bez prefixu 'npm', napr. install, run lint, run test"
+    - name: workingDir
+      type: string
+      default: src
+      description: "Podadresár v workspace kde sa nachádza package.json"
+  workspaces:
+    - name: source
+  steps:
+    - name: npm
+      image: node:20-alpine
+      workingDir: $(workspaces.source.path)/$(params.workingDir)
+      script: |
+        #!/bin/sh
+        set -e
+        echo "[npm] Spúšťam: npm $(params.script)"
+        npm $(params.script)
+        echo "[npm] Hotovo: npm $(params.script)"

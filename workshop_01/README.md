@@ -12,8 +12,8 @@ Vrámci predstavenia nástrojov spravil prezentujúci krátku ukážku kontajner
 Prvý z nich vychádzal z kontajnerového image Node.js a podával development build. Druhý kontajner bol vytvorený pomocou dvoj-stážového buildu a jeho výsledkom bol kontajner s nginx serverom, 
 ktorý podáva statické súbory vytvorené v prvej stáži ako produkčný build.
 
-Pre replikovanie dema je potrebné vojsť do priečinku [workshop_01/containers/demo-vue-app](./containers/demo-vue-app). Informácie potrebné pre lokálne spustenie vývojovej verzie aplikácie, 
-ako aj pre vytvorenie oboch kontajnerových image-ov nájdete v príslušnom [README.md](./containers/demo-vue-app/README.md) súbore.
+Pre replikovanie dema je potrebné vojsť do priečinku [apps/demo-vue-app/app](../apps/demo-vue-app/app). Informácie potrebné pre lokálne spustenie vývojovej verzie aplikácie, 
+ako aj pre vytvorenie oboch kontajnerových image-ov nájdete v príslušnom [README.md](../apps/demo-vue-app/app/README.md) súbore.
 Na vytvorenie image-ov je potrebná inštalácia kontajnerového enginu, napríklad [podman](https://podman.io/docs/installation). Okrem príkazov uvedených v README.md môžete preskúmať vytvorené image, 
 alebo sa dostať do terminálu bežiaceho kontajnera.
 

@@ -15,10 +15,11 @@ Tento workshop je zameraný na prácu s ArgoCD ako GitOps nástrojom. Ukážeme 
 
 ### Krok 1 – Spusti `make up` z adresára `lab/`
 
-1. Prejdi do adresára `lab/` a otvor súbor `makefile`:
+1. Prejdi do adresára `lab/` a ulož cestu pre neskorší návrat:
 
     ```bash
     cd ./lab
+    LAB_DIR="$(pwd)"
     sudo chmod 774 ./scripts/*.sh
     cat makefile
     ```
@@ -65,10 +66,10 @@ Tento workshop je zameraný na prácu s ArgoCD ako GitOps nástrojom. Ukážeme 
 
 ## Cvičenie 1 – Preskúmaj helm chart greeter aplikácie
 
-1. Vojdi do adresára `../helm`:
+1. Vojdi do adresára `../../apps/greeter/helm`:
 
     ```bash
-    cd ../helm
+    cd ../../apps/greeter/helm
     ```
 
 2. Prečítaj súbor `Chart.yaml`:
@@ -109,9 +110,8 @@ Tento workshop je zameraný na prácu s ArgoCD ako GitOps nástrojom. Ukážeme 
 1. Klonuj repozitár `gitops-infra` z Gitea (Gitea bola nakonfigurovaná skriptami z Cvičenia 0):
 
     ```bash
-    cd /tmp
-    git clone http://gitea.local/admin/gitops-infra.git
-    cd gitops-infra
+    git clone http://gitea.local/admin/gitops-infra.git /tmp/gitops-infra
+    cd /tmp/gitops-infra
     ```
 
 2. Nastav git identitu (ak ešte nie je nastavená):
@@ -126,7 +126,7 @@ Tento workshop je zameraný na prácu s ArgoCD ako GitOps nástrojom. Ukážeme 
 1. Skopíruj obsah adresára `helm/` do repozitára:
 
     ```bash
-    cp -r <cesta_k_workshopu>/workshop_05/helm/. ./greeter/
+    cp -r "${LAB_DIR}/../../apps/greeter/helm/." ./greeter/
     ```
 
 2. Zobraz skopírované súbory:

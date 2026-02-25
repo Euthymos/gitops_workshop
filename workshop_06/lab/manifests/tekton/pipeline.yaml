@@ -1,0 +1,187 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: greeter-ci
+  namespace: workshop-06-cicd
+spec:
+  params:
+    - name: appRepoFullName
+      type: string
+      description: "Napr. gitea-admin/app-repo"
+      default: "gitea-admin/app-repo"
+    - name: appRevision
+      type: string
+      default: main
+    - name: imageRepo
+      type: string
+      default: "image-registry.openshift-image-registry.svc:5000/workshop-06-cicd/greeter"
+      description: "Cesta k image bez tagu"
+    - name: imageTag
+      type: string
+      description: "Image tag – typicky git SHA commitu"
+    - name: infraRepoFullName
+      type: string
+      default: "gitea-admin/gitops-infra"
+    - name: infraValuesPath
+      type: string
+      default: "greeter/values.yaml"
+      description: "Cesta k values.yaml v infra repo"
+    - name: giteaBaseUrl
+      type: string
+      default: "http://gitea-http.gitea.svc.cluster.local:3000"
+      description: "Interná Gitea URL v clusteri"
+  workspaces:
+    - name: shared
+      description: "Zdieľaný workspace pre všetky tasky"
+    - name: basic-auth
+      description: "Secret s username/password pre git-clone (gitea-credentials)"
+
+  tasks:
+    # ── 1. Klonuj app-repo (git-clone z openshift-pipelines) ─────────────────
+    - name: clone
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: git-clone
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: URL
+          value: "$(params.giteaBaseUrl)/$(params.appRepoFullName).git"
+        - name: REVISION
+          value: $(params.appRevision)
+        - name: SUBDIRECTORY
+          value: src
+        - name: SSL_VERIFY
+          value: "false"
+        - name: DELETE_EXISTING
+          value: "true"
+      workspaces:
+        - name: output
+          workspace: shared
+        - name: basic-auth
+          workspace: basic-auth
+
+    # ── 2. Nainštaluj závislosti ────────────────────────────────────────────
+    - name: npm-install
+      runAfter:
+        - clone
+      taskRef:
+        name: npm
+      params:
+        - name: script
+          value: install
+      workspaces:
+        - name: source
+          workspace: shared
+
+    # ── 3. Lint + 4. Testy (paralelne) ──────────────────────────────────────
+    - name: npm-lint
+      runAfter:
+        - npm-install
+      taskRef:
+        name: npm
+      params:
+        - name: script
+          value: run lint
+      workspaces:
+        - name: source
+          workspace: shared
+
+    - name: npm-test
+      runAfter:
+        - npm-install
+      taskRef:
+        name: npm
+      params:
+        - name: script
+          value: run test
+      workspaces:
+        - name: source
+          workspace: shared
+
+    # ── 5. Buildni image a pushni do OCP registra (lokálny buildah-build-push) ──
+    - name: build-push
+      runAfter:
+        - npm-lint
+        - npm-test
+      taskRef:
+        name: buildah-build-push
+      params:
+        - name: IMAGE
+          value: "$(params.imageRepo):$(params.imageTag)"
+        - name: DOCKERFILE
+          value: Containerfile
+        - name: CONTEXT
+          value: src
+        - name: STORAGE_DRIVER
+          value: vfs
+        - name: TLS_VERIFY
+          value: "false"
+      workspaces:
+        - name: source
+          workspace: shared
+
+    # ── 6. Klonuj gitops-infra repo (git-clone z openshift-pipelines) ─────────
+    - name: clone-infra
+      runAfter:
+        - build-push
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: git-clone
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: URL
+          value: "$(params.giteaBaseUrl)/$(params.infraRepoFullName).git"
+        - name: REVISION
+          value: main
+        - name: SSL_VERIFY
+          value: "false"
+        - name: DELETE_EXISTING
+          value: "true"
+      workspaces:
+        - name: output
+          workspace: shared
+        - name: basic-auth
+          workspace: basic-auth
+
+    # ── 7. Aktualizuj image tag a pushni (git-cli z openshift-pipelines) ─────
+    - name: update-infra
+      runAfter:
+        - clone-infra
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: git-cli
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: GIT_USER_NAME
+          value: gitea-admin
+        - name: GIT_USER_EMAIL
+          value: gitea-admin@example.com
+        - name: SUBDIRECTORY
+          value: infrarepo
+        - name: GIT_SCRIPT
+          value: |
+            sed -i "s|tag:.*|tag: $(params.imageTag)|" $(params.infraValuesPath)
+            git checkout -B main
+            git add $(params.infraValuesPath)
+            git commit -m "ci: update greeter image tag to $(params.imageTag) [skip ci]"
+            git push origin main
+      workspaces:
+        - name: source
+          workspace: shared
+        - name: basic-auth
+          workspace: basic-auth

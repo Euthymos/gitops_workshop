@@ -1,0 +1,28 @@
+{
+  "name": "workshop-greeter",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest --watch=false",
+    "lint": "eslint . --fix --cache"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint": "^10.0.2",
+    "globals": "^17.3.0",
+    "jsdom": "^28.1.0",
+    "vite": "^5.4.8",
+    "vitest": "^1.0.0"
+  }
+}

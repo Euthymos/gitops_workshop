@@ -1,0 +1,22 @@
+image:
+  repository: quay.io/euthymos/workshop-greeter
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+attendeeName: ""
+
+exposure:
+  type: ingress
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  host: greeter.local
+
+route:
+  host: greeter.apps-greeter.apps.cluster-12345678.example.com
